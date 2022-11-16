@@ -1,25 +1,71 @@
 tools:
-  foobar:
-    title: Foo Bar
-    description: A dummy tool to exemplify the YAML file
+  make_geometry:
+    title: CATFLOW model geometry
+    description: |
+      Generate a set of curvilinear orthogonal coordinates and 
+      writes the corresponding geometry file for use with the hydrological model CATFLOW.
     version: 0.1
     parameters:
-      foo_int: 
-        type: integer
-      foo_float:
+      xh: 
         type: float
-      foo_string:
-        type: string
-      foo_enum:
+        array: true
+        description: x-coordinate of slope line (northing) [m]
+      yh:
+        type: float
+        array: true
+        description: y-coordinate of slope line (easting) [m]
+      zh:
+        type: float
+        array: true
+        description: z-coordinate of slope line (surface elevation) [m]
+      bh:
+        type: float
+        array: true
+        description: slope width [m]
+      tot.area:
+        type: float
+        description: total area of slope [m2]
+      dyy:
+        type: float
+        description: thickness of profile [m]
+      xsi:
+        type: float
+        array: true
+        description: relative discretization in lateral direction
+      eta:
+        type: float
+        array: true
+        description: relative discretization in vertical direction
+      htyp:
         type: enum
         values:
-          - foo
-          - bar
-          - baz
-      foo_array:
+          - 1
+          - 2
+          - 3
+        description: | 
+          type of geometry; (1) constant thickness (default), (2) cake-shape, 
+          (3) variable thickness with spline approximation of lower boundary
+  write_facmat:
+    title: CATFLOW multiplier matrices
+    description: |
+      Generate two files with multiplier matrices for saturated hydraulic 
+      conductivity and porosity based on the model geometry generated with 
+      the tool make_geometry in CATFLOW-specific format.
+    version: 0.1
+    parameters:
+      geometry:
+        type: file
+        desciption: | 
+          .Rds file generated for your catchment with the tool make_geometry,
+          et and xs are taken from that file, can also be directly specified 
+          (see below)
+      et:
         type: float
-        array: true 
-      foo_matrix:
-        type: file
-      foo_csv:
-        type: file
+        array: true
+        description: Vertical discretization of slope profile (eta vector)
+      xs:
+        type: float
+        array: true
+        description: Lateral discretization of slope profile (xsi vector)
+      numh:
+        type: integer
