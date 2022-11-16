@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  release:
+    types: [published]
+    
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: build and push
+      uses: docker/build-push-action@v1
+      with:
+        registry: ghcr.io
+        username: "vforwater"
+        password: ${{ secrets.PAT }}
+        repository: vforwater/tbr_template_r
+        tags: latest,${{ github.ref_name }}
