@@ -16,9 +16,6 @@ if (toolname == "") {
 
 # Switch for the different tools available in this package
 if (toolname == "make_geometry") {
-    # add filename to save generated geometry
-    params$out.file <- "/out/geometry.geo"
-
     # run function make.geometry() with params as input parameters
     pdf("/out/geometry.pdf")
     output <- make.geometry(params, plottitle = "Model Geometry")
