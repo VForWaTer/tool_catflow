@@ -12,6 +12,9 @@
         "out.file": "/out/geometry.geo"
     },
     "write_facmat": {
-        "geometry": "./in/make_geometry_out/geom.Rds"
+        "geometry": "./in/make_geometry_out/geom.Rds",
+        "write_soilhyd_ini": true,
+        "write_soil_types": true,
+        "fac": "./in/fac.dat"
     }
 }

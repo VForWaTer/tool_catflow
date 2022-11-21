@@ -33,6 +33,21 @@ if (toolname == "make_geometry") {
 
     # multipliers for scaling saturated water content / porosity
     write.facmat(output.file = "/out/thsmult.dat")
+
+    # write initial conditions for hydraulic conductivity
+    if (params$write_soilhyd_ini) {
+       write.facmat(output.file = "/out/soilhyd.ini",
+                    headr = paste("PSI ", 0, 1, length(eta), length(xsi), 1))
+    }
+
+    # write soiltype identifiers
+    if (params$write_soil_types) {
+        write.facmat(output.file = "/out/soils.bod",
+                     headr = paste("BODEN", length(eta), length(xsi), 1),
+                     fac = matrix(c(rep(1, ceiling(length(eta) / 2)),
+                                    rep(2, floor(length(eta) / 2))),
+                                  nrow = length(eta), ncol = length(xsi)))
+    }
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")

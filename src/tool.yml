@@ -6,7 +6,7 @@ tools:
       writes the corresponding geometry file for use with the hydrological model CATFLOW.
     version: 0.1
     parameters:
-      xh: 
+      xh:
         type: float
         array: true
         description: x-coordinate of slope line (northing) [m]
@@ -42,7 +42,7 @@ tools:
           - 1
           - 2
           - 3
-        description: | 
+        description: |
           type of geometry; (1) constant thickness (default), (2) cake-shape, 
           (3) variable thickness with spline approximation of lower boundary
       numh:
@@ -50,7 +50,7 @@ tools:
         description: ID for slope (default 1)
       ho_bez:
         type: float
-        description: | 
+        description: |
           point of reference for y-coordinate of slope profile (northing, 
           default 0)
       re_bez:
@@ -65,12 +65,12 @@ tools:
           default 0)
       w.aniso:
         type: float
-        description: | 
+        description: |
           angle of main direction of anisotropy, positive counterclockwise 
           (default 0)
       out.file:
         type: str
-        description: | 
+        description: |
           name for CATFLOW geofile to produce (no file is 
           generated if empty)
       plotting:
@@ -108,7 +108,7 @@ tools:
     parameters:
       geometry:
         type: file
-        desciption: | 
+        description: |
           .Rds file generated for your catchment with the tool make_geometry,
           et and xs are taken from that file, can also be directly specified 
           (see below)
@@ -122,3 +122,24 @@ tools:
         description: Lateral discretization of slope profile (xsi vector)
       numh:
         type: integer
+        description: ID of hillslope (default 1)
+      headr:
+        type: string
+        description: |
+          Header/First line in output file. Defaults to
+          "paste(-1000-numh, length(et), length(xs))".
+      fac:
+        type: file
+        description: |
+          Value that is to be assigned to all nodes. Either a single number, or 
+          a matrix of dimensions dim(fac) = c(length(et), length(xs)).
+      write_soilhyd_ini:
+        type: boolean
+        description: |
+          If true, the file "/out/soilhyd.ini" is written, which contains initial
+          conditions for hydraulic conductivity in CATFLOW specific format.
+      write_soil_types:
+        type: boolean
+        description: |
+          If true, the file "/out/soils.bod" is written, which contains soil type 
+          identifiers in CATFLOW specific format.
