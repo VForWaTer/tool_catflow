@@ -16,5 +16,12 @@
         "write_soilhyd_ini": true,
         "write_soil_types": true,
         "fac": "./in/fac.dat"
+    },
+    "write_precip": {
+        "raindat": "./in/raindat.csv",
+        "start.time": "01.01.2004 00:00:00",
+        "time.unit": "h",
+        "faktor.p": 1,
+        "output.file": "/out/rain.dat"
     }
 }

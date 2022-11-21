@@ -90,14 +90,14 @@ tools:
           indicating if the function is used from
           RStudio, which affects plots (generated in a new window in
           this case), and bringing the console back to top (default F)
-        thick.tol:
-          type: float
-          description: |
-            Tolerance for thickness when slope type is "3" (default 0.2).
-            The thickness tolerance 'thick.tol' defaults to 0.2, which 
-            means that for a desired thickness of 1 m (dyy = 1), the lower 
-            boundary will be iteratively refined until the thickness of 
-            the geometry is between 0.8 and 1.2 m.
+      thick.tol:
+        type: float
+        description: |
+          Tolerance for thickness when slope type is "3" (default 0.2).
+          The thickness tolerance 'thick.tol' defaults to 0.2, which 
+          means that for a desired thickness of 1 m (dyy = 1), the lower 
+          boundary will be iteratively refined until the thickness of 
+          the geometry is between 0.8 and 1.2 m.
   write_facmat:
     title: CATFLOW multiplier matrices
     description: |
@@ -143,3 +143,32 @@ tools:
         description: |
           If true, the file "/out/soils.bod" is written, which contains soil type 
           identifiers in CATFLOW specific format.
+  write_precip:
+    title: Precipitation time series
+    description: |
+      CATFLOW requires a precipitation record from which the rainfall intensities 
+      are interpolated between discrete time steps; rainfall intensities are thus 
+      only needed at those time steps when they are changing.
+      This tool converts a regular rainfall record (intensity at uniform time
+      intervals), to CATFLOW specific format.
+    version: 0.1
+    parameters:
+      raindat:
+        type: file
+        description: |
+          Rainfall data: data frame with two columns; time since start date, and 
+          precipitation
+      start.time: 
+        type: str
+        description: Start date for the simulation ("%Y-%m-%d %H:%M:%S")
+      time.unit: 
+        type: str
+        description: Time units of the precipitation record
+      faktor.p:
+        type: float
+        description: |
+          Conversion factor for rain rate to m/s (only needed if rate is NOT 
+          given as mm per 'time.unit')
+      output.file:
+        type: str
+        description: Name of file to produce.

@@ -48,6 +48,14 @@ if (toolname == "make_geometry") {
                                     rep(2, floor(length(eta) / 2))),
                                   nrow = length(eta), ncol = length(xsi)))
     }
+} else if (toolname == "write_precip") {
+    # write precipitation data with params as input
+    do.call(write.precip, params)
+
+    # plot rainfall data
+    pdf("/out/raindat.pdf")
+    output <- plot(params$raindat, t = "s", xlab = "time", ylab = "precipitation")
+    dev.off()
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")
