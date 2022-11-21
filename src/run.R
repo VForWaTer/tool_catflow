@@ -59,6 +59,9 @@ if (toolname == "make_geometry") {
 } else if (toolname == "write_climate") {
    # write climate data with params as input
    do.call(write.climate, params)
+} else if (toolname == "write_printout") {
+   # write printout times
+   do.call(write.printout, params)
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")

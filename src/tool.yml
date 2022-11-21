@@ -235,3 +235,37 @@ tools:
       NA.flag:
         type: float
         description: Flag for NA in the input data
+  write_printout:
+    title: CATFLOW printout times
+    description: |
+      Writes a file with printout times for a CATFLOW simulation.
+      Of the three arguments 'end.time', 'intervall', or 'length.prt', two have
+      to be specified to construct the time column, which is time elapsed since 
+      the start date in the chosen units. If all three are given, only 'intervall' 
+      and 'length.prt' are used. In this case, the last value of the elapsed time 
+      not necessarily corresponds with the given 'end.time'.
+    version: 0.1
+    parameters:
+      start.time:
+        type: str
+        description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
+      end.time:
+        type: str
+        description: End date for the simulation ("%d.%m.%Y %H:%M:%S")
+      length.prt:
+        type: integer
+        description: Length of printout record
+      intervall:
+        type: float
+        description: Time interval between printout times
+      time.unit:
+        type: str
+        description: Time units of printout times
+      flag:
+        type: integer
+        description: |
+          Flag controlling the amount of output at printout times, eventually a 
+          vector (1: dump all; 0: dump for surface nodes)
+      output.file:
+        type: str
+        description: Name of output file to produce

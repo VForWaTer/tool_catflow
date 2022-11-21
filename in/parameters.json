@@ -37,5 +37,13 @@
         "truebf": 0.1,
         "NA.flag": -999,
         "output.file": "/out/clima.dat"
+    },
+    "write_printout": {
+        "start.time": "01.01.2004 00:00:00",
+        "end.time": "03.01.2004 00:00:00",
+        "intervall": 0.5,
+        "time.unit": "h",
+        "flag": 1,
+        "output.file": "/out/printout.prt"
     }
 }
