@@ -23,5 +23,19 @@
         "time.unit": "h",
         "faktor.p": 1,
         "output.file": "/out/rain.dat"
+    },
+    "write_climate": {
+        "climadat": "./in/climadat.csv",
+        "start.time": "01.01.2004 00:00:00",
+        "time.unit": "h",
+        "rBilart": 1,
+        "ref.height": 8,
+        "sw0": -6,
+        "sw1": 0.7,
+        "sw2": 2.8e-4,
+        "trueb": 1.5,
+        "truebf": 0.1,
+        "NA.flag": -999,
+        "output.file": "/out/clima.dat"
     }
 }

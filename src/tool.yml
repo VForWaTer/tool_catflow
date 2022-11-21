@@ -144,7 +144,7 @@ tools:
           If true, the file "/out/soils.bod" is written, which contains soil type 
           identifiers in CATFLOW specific format.
   write_precip:
-    title: Precipitation time series
+    title: CATFLOW precipitation time series
     description: |
       CATFLOW requires a precipitation record from which the rainfall intensities 
       are interpolated between discrete time steps; rainfall intensities are thus 
@@ -172,3 +172,66 @@ tools:
       output.file:
         type: str
         description: Name of file to produce.
+  write_climate:
+    title: CATFLOW climatic data
+    description: |
+      Writes a file with climatic data in the CATFLOW specific format. 
+      This mainly affects the header of the file, which holds some default parameters.
+    version: 0.1
+    parameters:
+      climadat:
+        type: file
+        description: |
+          Climate data: data frame with time since start date in the first column, 
+          and a climate record in subsequent columns. The climate record holds:
+            - 'GlobRad':  Global radiation [W/m²]                  
+            - 'NetRad':   Net radiation [W/m²]                     
+            - 'Temp':     Temperature [°C]                         
+            - 'RelHum':   Relative humidity [%]                    
+            - 'vWind':    Wind velocity [m/s]                      
+            - 'dirWind':  Wind direction [°, clockwise from North]
+      output.file:
+        type: str
+        description: Name of file to produce
+      start.time:
+        type: str
+        description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
+      time.unit:
+        type: str
+        description: Time units of the climate record
+      rBilart: 
+        type: integer
+        description: |
+          Climate file type; specifies whether net radiation is computed (1),
+          or measured values are to be used (2)
+      ref.height:
+        type: float
+        description: Reference height of wind speed measurement
+      sw0:
+        type: float
+        description: |
+          Factor relating short wave radiation balance and net radiation, 
+          to be calibrated
+      sw1:
+        type: float
+        description: |
+          Factor relating short wave radiation balance and net radiation, 
+          to be calibrated
+      sw2:
+        type: float
+        description: |
+          Factor relating short wave radiation balance and net radiation, 
+          to be calibrated
+      trueb:
+        type: float
+        description: |
+          Factor for atmospheric dimming under consideration of water vapour 
+          pressure, to be calibrated against clear sky radiation data
+      truebf:
+        type: float
+        description: |
+          Factor for atmospheric dimming under consideration of water vapour 
+          pressure, to be calibrated against clear sky radiation data
+      NA.flag:
+        type: float
+        description: Flag for NA in the input data

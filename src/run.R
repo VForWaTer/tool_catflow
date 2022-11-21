@@ -56,6 +56,9 @@ if (toolname == "make_geometry") {
     pdf("/out/raindat.pdf")
     output <- plot(params$raindat, t = "s", xlab = "time", ylab = "precipitation")
     dev.off()
+} else if (toolname == "write_climate") {
+   # write climate data with params as input
+   do.call(write.climate, params)
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")
