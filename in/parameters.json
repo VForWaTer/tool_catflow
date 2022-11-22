@@ -45,5 +45,13 @@
         "time.unit": "h",
         "flag": 1,
         "output.file": "/out/printout.prt"
+    },
+    "write_surface_pob": {
+        "geometry": "./in/make_geometry_out/geom.Rds",
+        "lu": 33,
+        "precid": 1,
+        "climid": 1,
+        "windid": [1, 1, 1, 1],
+        "output.file": "/out/surface.pob"
     }
 }

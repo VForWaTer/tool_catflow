@@ -69,7 +69,7 @@ tools:
           angle of main direction of anisotropy, positive counterclockwise 
           (default 0)
       out.file:
-        type: str
+        type: string
         description: |
           name for CATFLOW geofile to produce (no file is 
           generated if empty)
@@ -159,10 +159,10 @@ tools:
           Rainfall data: data frame with two columns; time since start date, and 
           precipitation
       start.time: 
-        type: str
+        type: string
         description: Start date for the simulation ("%Y-%m-%d %H:%M:%S")
       time.unit: 
-        type: str
+        type: string
         description: Time units of the precipitation record
       faktor.p:
         type: float
@@ -170,7 +170,7 @@ tools:
           Conversion factor for rain rate to m/s (only needed if rate is NOT 
           given as mm per 'time.unit')
       output.file:
-        type: str
+        type: string
         description: Name of file to produce.
   write_climate:
     title: CATFLOW climatic data
@@ -191,13 +191,13 @@ tools:
             - 'vWind':    Wind velocity [m/s]                      
             - 'dirWind':  Wind direction [°, clockwise from North]
       output.file:
-        type: str
+        type: string
         description: Name of file to produce
       start.time:
-        type: str
+        type: string
         description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
       time.unit:
-        type: str
+        type: string
         description: Time units of the climate record
       rBilart: 
         type: integer
@@ -247,10 +247,10 @@ tools:
     version: 0.1
     parameters:
       start.time:
-        type: str
+        type: string
         description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
       end.time:
-        type: str
+        type: string
         description: End date for the simulation ("%d.%m.%Y %H:%M:%S")
       length.prt:
         type: integer
@@ -259,7 +259,7 @@ tools:
         type: float
         description: Time interval between printout times
       time.unit:
-        type: str
+        type: string
         description: Time units of printout times
       flag:
         type: integer
@@ -267,5 +267,56 @@ tools:
           Flag controlling the amount of output at printout times, eventually a 
           vector (1: dump all; 0: dump for surface nodes)
       output.file:
-        type: str
+        type: string
         description: Name of output file to produce
+  write_surface_pob:
+    title: CATFLOW surface attributes
+    description: |
+      Writes a file specifying the attributes (land-use, precipitation, 
+      climate, wind direction sectors) of the surface nodes for a CATFLOW 
+      simulation.
+    version: 0.1
+    parameters:
+      geometry:
+        type: file
+        description: |
+          .Rds file generated for your catchment with the tool make_geometry,
+          xs is taken from that file, can also be directly specified (see below)
+      xs:
+        type: float
+        array: true
+        description: Lateral discretization of slope profile (xsi vector)
+      lu:
+        type: integer
+        array: true
+        description: |
+          Land-use ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      climid:
+        type: integer
+        array: true
+        description: |
+          Climate ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      precid:
+        type: integer
+        array: true
+        description: |
+          Climate ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      windid:
+        type: integer
+        array: true
+        description: |
+          Wind direction ID: either a vector of numbers representing different 
+          wind direction sectors which are to be assigned to all surface nodes, 
+          or a matrix of numbers with the same number of rows as xsi and as 
+          many columns as there are wind direction sectors (default: 4 sectors)
+      headr:
+        type: string
+        description: |
+          Header line: defaults to: paste("3 ", length(windid), "0\n", "# Schlag-Id 
+          Clima-Id Niederschlag-Id Windrichtungsfaktoren",sep="")
+      output.file:
+        type: string
+        description: Name of file to produce
