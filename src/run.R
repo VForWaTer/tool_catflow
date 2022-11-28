@@ -1,7 +1,8 @@
-library(Catflow)
+# load json2aRgs for paremeter parsing
+library(json2aRgs)
 
-# load the parameters parser
-source("get_parameters.R")
+# load Catflow package
+library(Catflow)
 
 # get the call parameters for the tool
 params <- get_parameters()
