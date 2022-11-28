@@ -320,3 +320,207 @@ tools:
       output.file:
         type: string
         description: Name of file to produce
+  write_control:
+    title: CATFLOW project control file
+    description: |
+      Writes a project specific control file with the simulation control parameters
+      and the input/output filenames. Additionally, a directory for the output is
+      created.
+      Please note that the sequence of variables and filenames in the project control
+      files is fixed.
+    version: 0.1
+    parameters:
+      project.path:
+        type: string
+        description: |
+          Name of subdirectory where to produce the control file and the input/output 
+          directories (optional)
+      start.date:
+        type: string
+        description: Start date for the simulation ("%d.%m.%Y %H:%M:%S.00")
+      end.date:
+        type: string
+        description: End date for the simulation ("%d.%m.%Y %H:%M:%S.00")
+      offset:
+        type: integer
+        description: Time offset from start date [s]
+      method:
+        type: string
+        description: Computational method
+      dtbach:
+        type: integer
+        description: |
+          Maximum timestep for drainage network [s] (or overall computation, if lower 
+          than 'dt.max')
+      qtol:
+        type: float
+        description: Threshold for initiating of drainage network computation [m^3/s]
+      dt_max:
+        type: float
+        description: Maximum timestep in [s]
+      dt_min:
+        type: float
+        description: Minimum timestep in [s]
+      dt_ini:
+        type: float
+        description: Initial timestep in [s]
+      d_Th_opt:
+        type: float
+        description: Timestep control parameter; optimal change in water content [-]
+      d_Phi_opt:
+        type: float
+        description: Timestep control parameter; optimal change in hydraulic head [-]
+      n_gr:
+        type: integer
+        description: Desired number of Picard iteration steps
+      it_max:
+        type: integer
+        description: Maximum number of Picard iteration steps
+      piceps:
+        type: float
+        description: Desired convergence tolerance Picard method [-]
+      cgeps:
+        type: float
+        description: Desired convergence tolerance CG method [m]
+      rlongi:
+        type:
+        description: Longitude of time zone [decimal degrees] (default CET = 15)
+      longi:
+        type:
+        description: Longitude of catchment [decimal degrees]
+      lati:
+        type:
+        description: Latitude of catchment [decimal degrees]
+      istact:
+        type:
+        description: Number of different solute types (0-3)
+      Seed:
+        type:
+        description: Seed for portable random number generator
+      interact:
+        type:
+        description: |
+          Switch for subsurface-channel interaction; yes = "simact", or 
+          no = "noiact" (default)
+      print.flag:
+        type:
+        description: |
+          Character string with switches that control writing of output to each output
+          file: every timestep = 1, or at specified timesteps (printout.times) = 0
+      output.path:
+        type: string
+        description: |
+          Directory name for output files, will be created if not existing 
+          (default "out")
+      outfile.list:
+        type: json
+        description: List with output file names
+          log.file:
+            type: string
+            description: log of simulation
+          soil.prob.tab:
+            type: string
+            description: tables of soil-hydraulic functions
+          balance.file:
+            type: string
+            description: water balance
+          theta.file:
+            type: string
+            description: soil moisture
+          psi.file:
+            type: string
+            description: suction head
+          psi.fin:
+            type: string
+            description: suction head at final state
+          fl_xsi.file:
+            type: string
+            description: flux in xsi-direction (lateral)
+          fl_eta.file:
+            type: string
+            description: flux in eta-direction (hoizontal)
+          sink.file:
+            type: string
+            description: sinks
+          surfflow.file:
+            type: string
+            description: surface runoff
+          evapo.file:
+            type: string
+            description: evapo-transpiration
+          channel.file:
+            type: string
+            description: drainage network hydrographs
+          vel.eta.file: 
+            type: string
+            description: generalised pore-water velocity (eta-direction)
+          vel.xsi.file:
+            type: string
+            description: generalised pore-water velocity (xsi-direction)
+          conc.file:
+            type: string
+            description: residual solute concentration in the soil
+          hko.file:
+            type: string
+            description: vertical coordinate of the computational grid
+          sko.file:
+            type: string
+            description: horizontal coordinate of the computational grid
+          relsat.file:
+            type: string
+            description: relative saturation
+      input.path:
+        type: string
+        description: Directory name for input files (default "in")
+      gloabal.in.list:
+        type: json
+        description: List with global input file names
+          soildef.file:
+            type: string
+            description: specification of soil types
+          timeser.file:
+            type: string
+            description: specification of time series
+          lu.file:
+            type: string
+            description: assigning land-use ID to land-use parameter file
+          winddir.file:
+            type: string
+            description: sectors of wind direction
+      slope.in.list:
+        type: json
+        description: List that contains a list of slope-specific input file names for every hillslope. Default is a single slope (list(slope1))
+            # multiline string beenden (|)????
+            slope1: 
+              type: json
+              description: list with input file names for the first slope, the input files can be created with the other tools in the Catflow tool. 
+                geo.file:
+                  type: string
+                  description: hillslope geometry and -discretisation
+                soil.file:
+                  type: string
+                  description: assignment of soil types
+                ks.fac:
+                  type: string
+                  description: matrix of multipliers for hydraulic conductivity
+                ths.fac:
+                  type: string
+                  description: matrix of multipliers for porosity
+                macro.file:
+                  type: string
+                  description: assignment of macropore parameters
+                cv.file:
+                  type: string
+                  description: specification of control volumes
+                ini.file:
+                  type: string
+                  description: initial conditions for soil water dynamics
+                print.file:
+                  type: string
+                  description: specification of printout times
+                surf.file:
+                  type: string
+                  description: assignment of surface attributes
+                bc.file:
+                  type: string
+                  description: assignment of boundary conditions

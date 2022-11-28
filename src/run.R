@@ -1,4 +1,4 @@
-# load json2aRgs for paremeter parsing
+# load json2aRgs for parameter parsing
 library(json2aRgs)
 
 # load Catflow package
@@ -73,7 +73,9 @@ if (toolname == "make_geometry") {
 
    # write surface attributes
    do.call(write.surface.pob, params)
-   #write.surface.pob(params)
+} else if (toolname == "write_control") {
+    # write controll file
+    do.call(write.control, params)
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")

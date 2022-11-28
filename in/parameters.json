@@ -53,5 +53,9 @@
         "climid": 1,
         "windid": [1, 1, 1, 1],
         "output.file": "/out/surface.pob"
+    },
+    "write_control": {
+        "output.file": "TEST_CATFLOW.in",
+        "output.path": "/out/"
     }
 }
