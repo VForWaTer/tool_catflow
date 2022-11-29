@@ -55,7 +55,20 @@
         "output.file": "/out/surface.pob"
     },
     "write_control": {
-        "output.file": "TEST_CATFLOW.in",
-        "output.path": "/out/"
+        "output.file": "/out/TEST_CATFLOW.in",
+        "slope.in.list": {
+            "slope1": {
+                "geo.file": "geometry.geo",
+                "soil.file": "soils.bod",
+                "ks.fac": "ksmult.dat",
+                "ths.fac": "thsmult.dat",
+                "macro.file": "profil.mak",
+                "cv.file": "cont_vol.cv",
+                "ini.file": "soilhyd.ini",
+                "print.file": "printout.prt",
+                "surf.file": "surface.pob",
+                "bc.file": "boundary.rb"
+            }
+        }
     }
 }

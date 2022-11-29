@@ -324,8 +324,8 @@ tools:
     title: CATFLOW project control file
     description: |
       Writes a project specific control file with the simulation control parameters
-      and the input/output filenames. Additionally, a directory for the output is
-      created.
+      and the input/output filenames for one hillslope. Additionally, a directory for
+      the output is created.
       Please note that the sequence of variables and filenames in the project control
       files is fixed.
     version: 0.1
@@ -413,114 +413,30 @@ tools:
           Directory name for output files, will be created if not existing 
           (default "out")
       outfile.list:
-        type: json
-        description: List with output file names
-          log.file:
-            type: string
-            description: log of simulation
-          soil.prob.tab:
-            type: string
-            description: tables of soil-hydraulic functions
-          balance.file:
-            type: string
-            description: water balance
-          theta.file:
-            type: string
-            description: soil moisture
-          psi.file:
-            type: string
-            description: suction head
-          psi.fin:
-            type: string
-            description: suction head at final state
-          fl_xsi.file:
-            type: string
-            description: flux in xsi-direction (lateral)
-          fl_eta.file:
-            type: string
-            description: flux in eta-direction (hoizontal)
-          sink.file:
-            type: string
-            description: sinks
-          surfflow.file:
-            type: string
-            description: surface runoff
-          evapo.file:
-            type: string
-            description: evapo-transpiration
-          channel.file:
-            type: string
-            description: drainage network hydrographs
-          vel.eta.file: 
-            type: string
-            description: generalised pore-water velocity (eta-direction)
-          vel.xsi.file:
-            type: string
-            description: generalised pore-water velocity (xsi-direction)
-          conc.file:
-            type: string
-            description: residual solute concentration in the soil
-          hko.file:
-            type: string
-            description: vertical coordinate of the computational grid
-          sko.file:
-            type: string
-            description: horizontal coordinate of the computational grid
-          relsat.file:
-            type: string
-            description: relative saturation
+        type: struct
+        array: true
+        description: |
+          List with output file names. 
+          See the documentation of the Catflow-R-Package to see what the keys should 
+          look like. Usually you can use the default values.
       input.path:
         type: string
         description: Directory name for input files (default "in")
       gloabal.in.list:
-        type: json
-        description: List with global input file names
-          soildef.file:
-            type: string
-            description: specification of soil types
-          timeser.file:
-            type: string
-            description: specification of time series
-          lu.file:
-            type: string
-            description: assigning land-use ID to land-use parameter file
-          winddir.file:
-            type: string
-            description: sectors of wind direction
+        type: struct
+        array: true
+        description: |
+          List with global input file names.
+          See the documentation of the Catflow-R-Package to see what the keys should 
+          look like. Usually you can use the default values.
       slope.in.list:
-        type: json
-        description: List that contains a list of slope-specific input file names for every hillslope. Default is a single slope (list(slope1))
-            # multiline string beenden (|)????
-            slope1: 
-              type: json
-              description: list with input file names for the first slope, the input files can be created with the other tools in the Catflow tool. 
-                geo.file:
-                  type: string
-                  description: hillslope geometry and -discretisation
-                soil.file:
-                  type: string
-                  description: assignment of soil types
-                ks.fac:
-                  type: string
-                  description: matrix of multipliers for hydraulic conductivity
-                ths.fac:
-                  type: string
-                  description: matrix of multipliers for porosity
-                macro.file:
-                  type: string
-                  description: assignment of macropore parameters
-                cv.file:
-                  type: string
-                  description: specification of control volumes
-                ini.file:
-                  type: string
-                  description: initial conditions for soil water dynamics
-                print.file:
-                  type: string
-                  description: specification of printout times
-                surf.file:
-                  type: string
-                  description: assignment of surface attributes
-                bc.file:
-                  type: string
-                  description: assignment of boundary conditions
+        type: struct
+        array: true
+        description: | 
+          List that contains a list of slope-specific input file names for every hillslope. 
+          Default is a single slope (list(slope1)).
+          See the documentation of the Catflow-R-Package to see what the keys should 
+          look like. Usually you can use the default values.
+      output.file:
+        type: string
+        description: Name of control file to produce.
