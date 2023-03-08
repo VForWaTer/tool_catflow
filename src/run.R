@@ -83,6 +83,9 @@ if (toolname == "make_geometry") {
     # drop geometry from params (unused in write.surface.pob)
     params$geometry <- NULL
 
+    # output file is always saved to /out/
+    params$output.file <- "/out/surface.pob"
+
     # write surface attributes
     do.call(write.surface.pob, params)
 } else if (toolname == "write_control") {
