@@ -51,16 +51,8 @@
         "windid": [1, 1, 1, 1]
     },
     "write_control": {
-        "output.file": "/out/TEST_CATFLOW.in",
-        "geo.file": "geometry.geo",
-        "soil.file": "soils.bod",
-        "ks.fac": "ksmult.dat",
-        "ths.fac": "thsmult.dat",
-        "macro.file": "profil.mak",
-        "cv.file": "cont_vol.cv",
-        "ini.file": "soilhyd.ini",
-        "print.file": "printout.prt",
-        "surf.file": "surface.pob",
-        "bc.file": "boundary.rb"
+        "start.date": "01.01.2004 00:00:00.00",
+        "end.date": "03.01.2004 00:00:00",
+        "geo.file": "geometry.geo"
     }
 }

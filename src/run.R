@@ -89,11 +89,36 @@ if (toolname == "make_geometry") {
     # write surface attributes
     do.call(write.surface.pob, params)
 } else if (toolname == "write_control") {
-    # build slope.in.list
-    # TODO (30.11.: params in slope liste wursten)
+    # output file is always called catflow.in
+    params$output.file <- "run_cat.in"
 
-    # write controll file
+    # project.path is always /out/CATFLOW
+    params$project.path <- "/out/CATFLOW"
+
+    # create the project folder and set permissions
+    system("mkdir /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW")
+
+    # build slope.in.list
+    params$slope.in.list <- list(
+        slope1 = list(
+            geo.file = "test.geo",
+            soil.file = "soils.bod",
+            ks.fac = "ksmult.dat",
+            ths.fac = "thsmult.dat",
+            macro.file = "profil.mak",
+            cv.file = "cont_vol.cv",
+            ini.file = "soilhyd.ini",
+            print.file = "printout.prt",
+            surf.file = "surface.pob",
+            bc.file = "boundary.rb"
+            ))
+
+    # write project controll file
     do.call(write.control, params)
+
+    # write main control file
+    write.CATFLOW.IN(params$output.file, project.path = params$project.path)
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")
