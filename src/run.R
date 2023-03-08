@@ -18,7 +18,7 @@ if (toolname == "") {
 # Switch for the different tools available in this package
 if (toolname == "make_geometry") {
     # output file is always saved to /out/
-    params$out.file <- paste("/out/", params$out.file, sep = "")
+    params$out.file <- "/out/geometry.geo"
 
     # run function make.geometry() with params as input parameters
     pdf("/out/geometry.pdf")
@@ -54,7 +54,7 @@ if (toolname == "make_geometry") {
     }
 } else if (toolname == "write_precip") {
     # output file is always saved to /out/
-    params$output.file <- paste("/out/", params$output.file, sep = "")
+    params$output.file <- "/out/rain.dat"
 
     # write precipitation data with params as input
     do.call(write.precip, params)
@@ -65,16 +65,14 @@ if (toolname == "make_geometry") {
     dev.off()
 } else if (toolname == "write_climate") {
     # output file is always saved to /out/
-    params$output.file <- paste("/out/", params$output.file, sep = "")
+    params$output.file <- "/out/clima.dat"
 
     # write climate data with params as input
     do.call(write.climate, params)
 } else if (toolname == "write_printout") {
     # output file is always saved to /out/
-    params$output.file <- paste("/out/", params$output.file, sep = "")
-    f <- file("/out/STDOUT.log")
-    writeLines(print(params))
-    close(f)
+    params$output.file <- "/out/printout.prt"
+
     # write printout times
     do.call(write.printout, params)
 } else if (toolname == "write_surface_pob") {
