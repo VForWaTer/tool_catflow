@@ -68,11 +68,6 @@ tools:
         description: |
           angle of main direction of anisotropy, positive counterclockwise 
           (default 0)
-      out.file:
-        type: string
-        description: |
-          name for CATFLOW geofile to produce (no file is 
-          generated if empty)
       plotting:
         type: boolean
         description: |
@@ -169,9 +164,6 @@ tools:
         description: |
           Conversion factor for rain rate to m/s (only needed if rate is NOT 
           given as mm per 'time.unit')
-      output.file:
-        type: string
-        description: Name of file to produce.
   write_climate:
     title: CATFLOW climatic data
     description: |
@@ -190,9 +182,6 @@ tools:
             - 'RelHum':   Relative humidity [%]                    
             - 'vWind':    Wind velocity [m/s]                      
             - 'dirWind':  Wind direction [°, clockwise from North]
-      output.file:
-        type: string
-        description: Name of file to produce
       start.time:
         type: string
         description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
@@ -266,9 +255,9 @@ tools:
         description: |
           Flag controlling the amount of output at printout times, eventually a 
           vector (1: dump all; 0: dump for surface nodes)
-      output.file:
+      first.time:
         type: string
-        description: Name of output file to produce
+        description: First printout time ("%d.%m.%Y %H:%M:%S")
   write_surface_pob:
     title: CATFLOW surface attributes
     description: |
@@ -317,9 +306,6 @@ tools:
         description: |
           Header line: defaults to: paste("3 ", length(windid), "0\n", "# Schlag-Id 
           Clima-Id Niederschlag-Id Windrichtungsfaktoren",sep="")
-      output.file:
-        type: string
-        description: Name of file to produce
   write_control:
     title: CATFLOW project control file
     description: |

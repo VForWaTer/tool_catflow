@@ -8,8 +8,7 @@
         "dyy": 2,
         "xsi": [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
         "eta": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-        "htyp": 1,
-        "out.file": "geometry.geo"
+        "htyp": 1
     },
     "write_facmat": {
         "geometry": "./in/make_geometry_out/geom.Rds",
@@ -35,24 +34,21 @@
         "sw2": 2.8e-4,
         "trueb": 1.5,
         "truebf": 0.1,
-        "NA.flag": -999,
-        "output.file": "clima.dat"
+        "NA.flag": -999
     },
     "write_printout": {
         "start.time": "01.01.2004 00:00:00",
         "end.time": "03.01.2004 00:00:00",
         "intervall": 0.5,
         "time.unit": "h",
-        "flag": 1,
-        "output.file": "printout.prt"
+        "flag": 1
     },
     "write_surface_pob": {
         "geometry": "./in/make_geometry_out/geom.Rds",
         "lu": 33,
         "precid": 1,
         "climid": 1,
-        "windid": [1, 1, 1, 1],
-        "output.file": "/out/surface.pob"
+        "windid": [1, 1, 1, 1]
     },
     "write_control": {
         "output.file": "/out/TEST_CATFLOW.in",
