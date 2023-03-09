@@ -14,6 +14,12 @@ RUN rm json2aRgs_0.3.0.tar.gz
 # install Catflow-R-Package dependencies
 RUN R -e "install.packages(c('deSolve', 'RColorBrewer', 'zoo', 'xts'))"
 
+# install gdal
+RUN apt-get update && apt-get install -y libgdal-dev
+
+# install representative hillslope dependencies
+RUN R -e "install.packages(c('rgdal', 'raster'))"
+
 # create the tool input structure
 RUN mkdir /in
 COPY ./in /in
