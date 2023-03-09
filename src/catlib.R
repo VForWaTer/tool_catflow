@@ -186,3 +186,53 @@ catlib_complete_file_structure <- function(params) {
     # pointer to surface node attributes
     cat(paste(1, "33 3 %coniferous forest", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_set1.dat")
 }
+
+catlib_make_geometry_from_tif <- function(params) {
+    # loader raster package to open .tif files
+    library("raster")
+
+    # load hillslope tool
+    source("hillslope_method.R")
+
+    #import spatial data
+    flow_accum <- raster(params$flow_accumulation)        # flowaccumulation Attention should be in log scale (Edit: Not working with log - Ashish)
+    hillslopes <- raster(params$basin)             # !!! entire basin as one hillslope 
+    elev_2_river <- raster(params$elevation2river)  # elevation to !!!elev2riv_mod !!! (because of failed calculation areas, gasp are filled with values of SAGA calculation)
+    dist_2_river <- raster(params$distance2river)  # distance to river
+    dem <- raster(params$dem)           # digital elevation modell
+    aspect <- raster(params$aspect)            # aspect
+    river_id <- raster(params$river_id)  # stream link id
+
+    # plot spatial data
+    system("mkdir /out/plots")
+    system("chmod 777 /out/plots")
+
+    pdf("/out/plots/spatial_data.pdf")
+
+    plot(hillslopes, main = "Basin")
+    plot(river_id, main = "River Network")
+    plot(aspect, main = "Aspect")
+    plot(flow_accum, main = "Flow Accumulation")
+    plot(dem, main = "DEM")
+    plot(elev_2_river, main = "Elevation to River")
+    plot(dist_2_river, main = "Distance to River")
+
+    dev.off()
+
+    # transform hillslope to point table
+    hillslope_data_frame <- rasterToPoints(hillslopes)
+
+    # create a list of the input maps
+    li_spatial <- list("accum" = flow_accum, "hillslopes" = hillslopes, "dem" = dem, "dist2river" = dist_2_river,
+                       "elev2river" = elev_2_river, "aspect" = aspect, "hillslope_table" = hillslope_data_frame,
+                       "stream_id" = river_id)
+
+    # Select a hillslope from the hillslope raster map (integer value) - halfbasins file
+    hillslope_nr <- 1
+
+    # Run hillslope function. no_rf= Percentage of no flow area for region with almost no slope
+    # min_dist = minimum number of cells within a hillslope; freedom= freedom of spline function
+
+    hill <- hillslope_tool(hillslope_nr, li_spatial, plot_hillslope_width = TRUE, plot_2d_catena = TRUE,
+                           no_rf = 0.37, min_dist = 10, min_area = 10000, freedom = 10)
+    }

@@ -42,9 +42,10 @@ if (toolname == "make_geometry") {
 } else if (toolname == "complete_file_structure") {
     catlib_complete_file_structure(params)
 
+} else if (toolname == "make_geometry_from_tif") {
+    catlib_make_geometry_from_tif(params)
+
 } else {
     # in any other case, the tool was invalid or not configured
-    f <- file("/out/error.log")
-    writeLines(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep = ""), con = f)
-    close(f)
+    print(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep = ""))
 }

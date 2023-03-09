@@ -434,3 +434,30 @@ tools:
       conif.par, lu_set1.dat.
     version: 0.1
     parameters:
+  make_geometry_from_tif:
+    title: Create CATFLOW geometry from .tif files via representative hillslopes.
+    description: |
+      Infers the representative hillslope for a basin from the given .tif files.
+    version: 0.1
+    parameters:
+      flow_accumulation:
+        type: file
+        description: Flow accumulation .tif file.
+      basin:
+        type: file
+        description: .tif file for the entire basin as one hillslope.
+      elevation2river:
+        type: file
+        description: .tif file for elevation to river.
+      distance2river:
+        type: file
+        description: .tif file for the distance to river.
+      dem:
+        type: file
+        description: Digital elevation model (DEM).
+      aspect:
+        type: file
+        description: .tif file for aspect.
+      river_id:
+        type: file
+        description: .tif file for river id.
