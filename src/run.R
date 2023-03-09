@@ -119,9 +119,76 @@ if (toolname == "make_geometry") {
 
     # write main control file
     write.CATFLOW.IN(params$output.file, project.path = params$project.path)
+} else if (toolname == "complete_file_structure") {
+    # create the project and the in/ folder and set permissions
+    system("mkdir /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW")
+    system("mkdir /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW/in")
+
+    # macro.file: "profil.mak"
+    cat(paste("1 0 2", "ari", "0.00 1.00 0.00 1.00 1 1.00 1.00 ", sep = "\n"),  file = "/out/CATFLOW/in/profil.mak")
+
+    # cv.file: "cont_vol.cv"
+    cat(paste("1", "0.8 0.9 0.98 1.0", sep = "\n"), file = "/out/CATFLOW/in/cont_vol.cv")
+
+    # bc.file: "boundary.rb"
+    cat(paste("L", "1 0", "0. 1. 0", " ",
+              "R", "1 0", "0. 1. -10", " ",
+              "T", "1 0", "0. 1. -99 ", " ",
+              "B", "1 0", "0. 1. 0", " ",
+              "S", "1 0", "0. 1. 0. 1. -99", " ",
+              "M", 0, sep = "\n"),
+              file = "/out/CATFLOW/in/boundary.rb")
+
+    # winddir.file: "winddir.def"
+    cat(paste("4", "240 0.81", " 50 0.78", " 80 0.97", "220 0.94", sep = "\n"), file = "/out/CATFLOW/in/winddir.def")
+
+    # soildef.file: soils.def
+    # writes a soil type definition for two soil types:
+    cat(paste("2", "1 Loamy Sand, porosity 0.55, bulk dens 1 g/cm3",
+              "1 800 1. 1. 1e-4 0.5 0.34 0.11 20. 0.70 0.050 1. 1. 1.",
+              "4.05e-5 0.55 0.06 12.40 2.28 -6.00 8.00 1000.00 0.80",
+              "0. 0. 0.", "0. 0. 0.", "0. 0. 0.",
+              "2 Sandy Clay Loam (30% S, 40 % U; 30 % T)",
+              "1 800 1. 1. 1e-4 0.5 0.34 0.11 20. 0.70 0.050 1. 1. 1.",
+              "3.42e-6 0.48 0.08 0.96 1.5 -6.00 8.00 1200.00 0.80",
+              "0. 0. 0.", "0. 0. 0.", "0. 0. 0.", sep = "\n"),
+              file = "/out/CATFLOW/in/soils.def")
+
+    # timeser.file: timeser.def
+    cat(paste("PREC", "1", "in/rain.dat", "",
+              "BC", "0", "", "SINKS", "0", "", "SOLUTE", "0", "",
+              "LAND-USE", "in/landuse/lu_ts.dat", "",
+              "CLIMATE", "1", "in/clima.dat", "", sep = "\n"),
+              file = "/out/CATFLOW/in/timeser.def")
+
+    # file related to landuse specification
+    # create landuse subdirectory and set permissions
+    system("mkdir /out/CATFLOW/in/landuse")
+    system("chmod 777 /out/CATFLOW/in/landuse")
+
+    # pointer to land-use parameters
+    cat(paste("3", "coniferous forest", "in/landuse/conif.par", sep = " ", file = "/out/CATFLOW/in/landuse/lu_file.def"))
+
+    # time-series of land-use parameters
+    cat(paste("01.01.2004 00:00:00.00", "in/landuse/lu_set1.dat", "01.01.2005 00:00:00.00", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_ts.dat")
+
+    # land-use parameters
+    cat(paste(
+         paste("2", "KST", "MAK", "BFI", "BBG", "TWU", "PFH",
+               "PALB", "RSTMIN", "WP_BFW", "F_BFW", sep = " "),
+         "0. 3. 1. 5. 0.95 5.0 5.0 0.15 1.",
+         paste(c("1 ", "366"),
+               "2. 1. 1. 1.0 1.0 1.0 1.0 546. 0.0530.",
+         sep = " ", collapse = "\n"), sep = "\n"),
+     file = "/out/CATFLOW/in/landuse/conif.par")
+
+    # pointer to surface node attributes
+    cat(paste(1, "33 3 %coniferous forest", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_set1.dat")
 } else {
     # in any other case, the tool was invalid or not configured
     f <- file("/out/error.log")
-    writeLines(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep=""), con=f)
+    writeLines(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep = ""), con = f)
     close(f)
 }

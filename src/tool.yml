@@ -426,3 +426,11 @@ tools:
       output.file:
         type: string
         description: Name of control file to produce.
+  complete_file_structure:
+    title: Create additional files to start a CATFLOW model run
+    description: |
+      Create necessary filestructure to start a CATFLOW model run. Creates files profil.mak,
+      cont_vol.cv, boundary.rb, winddir.def, soils.def, timeser.def, lu_file.def, lu_ts.dat,
+      conif.par, lu_set1.dat.
+    version: 0.1
+    parameters:
