@@ -1,3 +1,11 @@
+#--------------------------------------------------------------------------------------
+# This file essentially maps the Catflow preprocessing functions from the
+# Catflow-R-Pacakge and makes them available in the container.
+# "Real" workflows which combine the different functions can be found in lib.R
+# This file additionally contains a function based on the hillslope wizards developed
+# by Ralf Loritz (2014). The function is used to infer a representative hillslope from
+# provided .tif files.
+
 # load Catflow package
 library(Catflow)
 
@@ -187,7 +195,7 @@ catlib_complete_file_structure <- function(params) {
     cat(paste(1, "33 3 %coniferous forest", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_set1.dat")
 }
 
-catlib_make_geometry_from_tif <- function(params) {
+catlib_make_geometry_representative_hillslope <- function(params) {
     # loader raster package to open .tif files
     library("raster")
 
@@ -219,6 +227,8 @@ catlib_make_geometry_from_tif <- function(params) {
 
     dev.off()
 
+    project.path <- "/out/CATFLOW"
+
     # transform hillslope to point table
     hillslope_data_frame <- rasterToPoints(hillslopes)
 
@@ -232,7 +242,42 @@ catlib_make_geometry_from_tif <- function(params) {
 
     # Run hillslope function. no_rf= Percentage of no flow area for region with almost no slope
     # min_dist = minimum number of cells within a hillslope; freedom= freedom of spline function
+    pdf("/out/plots/hillslope_plots.pdf")
 
     hill <- hillslope_tool(hillslope_nr, li_spatial, plot_hillslope_width = TRUE, plot_2d_catena = TRUE,
                            no_rf = 0.37, min_dist = 10, min_area = 10000, freedom = 10)
-    }
+
+    dev.off()
+
+    #create slope.list for Catflow function make.geometry
+    # turn around hillslope catena left to right
+    hill$short_rep_hill$east <- rev(hill$short_rep_hill$east)                            # East
+    hill$short_rep_hill$north <- rev(hill$short_rep_hill$north)                          # North
+    hill$short_rep_hill$short_elev <- rev(hill$short_rep_hill$short_elev + 6)            # Elev + 4 or 6?
+
+    # rectangle, get hillslope width w : A/length = w
+    w <- hill$area / hill$short_rep_hill$short_dist[length(hill$short_rep_hill$short_dist)]
+
+    # assign homogenous width to hill object
+    hill$short_rep_hill$short_width_corr <- rep(c(w), length(hill$short_rep_hill$short_dist))    # Width
+
+    # slope.list as input for make_geometry
+    topo <- list(
+        xh = hill$short_rep_hill$east,              # East
+        yh = hill$short_rep_hill$north,             # North
+        zh = hill$short_rep_hill$short_elev,        # Elev
+        bh = hill$short_rep_hill$short_width_corr,  # Width
+        dist = hill$short_rep_hill$short_dist,
+        tot.area = hill$area,                       # Area
+        htyp = 1,                                   # Hillslope type
+        dyy = 1,                                    # Thickness of profile [m] average of drillings 2.1 m
+        xsi = seq(0, 1, length = max(hill$short_rep_hill$short_dist) + 1),  # in order to get every 1m a node length of hillslope + 1             # discretitation
+        eta = c(seq(0, 0.60, length = 4), seq(0.80, 1, length = 11)),       # eta starts at the bottom, upper 50 cm, dx=10cm, 50-400cm dx=25 cm
+        out.file = "geometry.geo"       # outpath
+    )
+
+    out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+
+    # set permissions for CATFLOW directory
+    system("chmod 777 /out/CATFLOW")
+}

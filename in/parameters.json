@@ -57,7 +57,7 @@
     },
     "complete_file_structure": {
     },
-    "make_geometry_from_tif": {
+    "make_geometry_representative_hillslope": {
         "flow_accumulation": "./in/geoprocessing/flow_accumulation.tif",
         "basin": "./in/geoprocessing/basin.tif",
         "elevation2river": "./in/geoprocessing/elev2riv.tif",

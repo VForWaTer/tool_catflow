@@ -42,8 +42,8 @@ if (toolname == "make_geometry") {
 } else if (toolname == "complete_file_structure") {
     catlib_complete_file_structure(params)
 
-} else if (toolname == "make_geometry_from_tif") {
-    catlib_make_geometry_from_tif(params)
+} else if (toolname == "make_geometry_representative_hillslope") {
+    catlib_make_geometry_representative_hillslope(params)
 
 } else {
     # in any other case, the tool was invalid or not configured

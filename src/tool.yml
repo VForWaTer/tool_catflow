@@ -434,10 +434,19 @@ tools:
       conif.par, lu_set1.dat.
     version: 0.1
     parameters:
-  make_geometry_from_tif:
+  make_geometry_representative_hillslope:
     title: Create CATFLOW geometry from .tif files via representative hillslopes.
     description: |
-      Infers the representative hillslope for a basin from the given .tif files.
+      Hillslope wizzard developed by Ralf Loritz (2015)
+      Delination of 2D catenas from hillslopes. The hillslope, dist2river, elev2river and 
+      accumulation maps were extracted using QGIS in combination Grass GIS and SAGA GIS. 
+      The idea behind this code is based on a approach from Francke et al. 2006 (Automated 
+      catena-based discretization of landscapes for the derivation of hydrological modelling 
+      units) and Cochrane and Flanagan (2003).
+      The idea behind this approach is to select every unique distance and their corrosponding 
+      elevation from a river inside a hillslope. If more than one raster cell have the same 
+      distance the elevation is calculated by a weighted mean using the flow accumulation. The 
+      hillslope width can be estimated by the frequency of the appearance of a single distance.
     version: 0.1
     parameters:
       flow_accumulation:

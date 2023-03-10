@@ -16,7 +16,7 @@ library('rgdal')
 
 #--------------------------------------------------------------------------------------
 # Own packages
-#source('./source/plot.R')
+source("plot.R")
 
 #--------------------------------------------------------------------------------------
 # Start hillslope method
@@ -44,16 +44,16 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   #--------------------------------------------------------------------------------------
   # select hillslope specific elevations, distances, flow accumulations and aspects
   #--------------------------------------------------------------------------------------
-  dist_hill <- data.frame('dist2river'=extract(dist_2_river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  elev_hill <- data.frame('elev2river'=extract(elev_2_river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  flow_hill <- data.frame('accum'=extract(flow_accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
+  dist_hill <- data.frame('dist2river'=extract(dist2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  elev_hill <- data.frame('elev2river'=extract(elev2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  flow_hill <- data.frame('accum'=extract(accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
   asp_hill <- data.frame('aspect'=extract(aspect, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
   
   #--------------------------------------------------------------------------------------
   # start calculation
   #--------------------------------------------------------------------------------------
   # reduce precision of dist2river map 
-  round_value <- res(dist_2_river)[1]
+  round_value <- res(dist2river)[1]
   dist_hill <- round(dist_hill/round_value)*round_value
   
   # count all values and there appearance
@@ -66,7 +66,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   rep_hill$mean_elev <- as.numeric(sapply(names(ob_mean_catena), function(i){sum(elev_hill$elev2river[dist_hill$dist2river == i] *
                                                                                  sqrt(flow_hill$accum[dist_hill$dist2river == i]),na.rm=TRUE)/
                                                                                  sum(sqrt(flow_hill$accum[dist_hill$dist2river == i]),na.rm=TRUE)}))
-  rep_hill$width <- as.numeric(ob_mean_catena)*res(dist_2_river)[1]
+  rep_hill$width <- as.numeric(ob_mean_catena)*res(dist2river)[1]
   
   
   ###
@@ -134,7 +134,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   ###
   # find connected river segment
   xy <- matrix(c(min_east, min_north),1,2)
-  river_cell <- extract(river_id, xy, buffer=100)
+  river_cell <- extract(stream_id, xy, buffer=100)
   stream_hill_nr <- as.numeric(names(which.max(table(river_cell))))
   
   if(length(rep_hill$mean_dist) > min_dist | area > min_area)
