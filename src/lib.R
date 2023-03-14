@@ -14,4 +14,7 @@ lib_preprocess_catflow <- function(params) {
     params$write_soil_types <- TRUE
 
     catlib_write_facmat(params)
+
+    # (3) write precipitation file
+    catlib_write_precip(params)
 }

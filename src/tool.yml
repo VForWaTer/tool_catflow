@@ -497,3 +497,19 @@ tools:
       river_id:
         type: file
         description: .tif file for river id.
+      raindat:
+        type: file
+        description: |
+          Rainfall data: data frame with two columns; time since start date, and 
+          precipitation
+      start.time: 
+        type: string
+        description: Start date for the simulation ("%Y-%m-%d %H:%M:%S")
+      time.unit: 
+        type: string
+        description: Time units of the precipitation record
+      faktor.p:
+        type: float
+        description: |
+          Conversion factor for rain rate to m/s (only needed if rate is NOT 
+          given as mm per 'time.unit')

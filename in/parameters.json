@@ -73,6 +73,11 @@
         "distance2river": "./in/geoprocessing/dist2riv.tif",
         "dem": "./in/geoprocessing/dem.tif",
         "aspect": "./in/geoprocessing/aspect.tif",
-        "river_id": "./in/geoprocessing/river_id.tif"
+        "river_id": "./in/geoprocessing/river_id.tif",
+        "raindat": "./in/raindat.csv",
+        "start.time": "01.01.2004 00:00:00",
+        "time.unit": "h",
+        "faktor.p": 1,
+        "output.file": "rain.dat"
     }
 }

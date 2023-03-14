@@ -65,14 +65,29 @@ catlib_write_facmat <- function(params) {
 }
 
 catlib_write_precip <- function(params) {
-    # output file is always saved to /out/
-    params$output.file <- "/out/rain.dat"
+    # create project folder
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
+    # output file is always saved to /out/CATFLOW/in/
+    params$output.file <- "/out/CATFLOW/in/rain.dat"
 
     # write precipitation data with params as input
-    do.call(write.precip, params)
+    write.precip(
+        params$raindat,
+        params$output.file,
+        params$start.time,
+        params$time.unit,
+        params$faktor.p
+    )
+    
+    # create folder for plots
+    system("mkdir -p /out/plots")
+    system("chmod 777 /out/plots")
 
     # plot rainfall data
-    pdf("/out/raindat.pdf")
+    pdf("/out/plots/raindat.pdf")
     plot(params$raindat, t = "s", xlab = "time", ylab = "precipitation")
     dev.off()
 }
