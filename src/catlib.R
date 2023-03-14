@@ -10,12 +10,22 @@
 library(Catflow)
 
 catlib_make_geometry <- function(params) {
-    # output file is always saved to /out/
-    params$out.file <- "/out/geometry.geo"
+    # output file is always saved to /out/CATFLOW/in/
+    params$out.file <- "geometry.geo"
+
+    # create project folder
+    project.path <- "/out/CATFLOW/in"
+    system("mkdir -p /out/CATFLOW/in/")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
+    # create folder for plots
+    system("mkdir -p /out/plots")
+    system("chmod 777 /out/plots")
 
     # run function make.geometry() with params as input parameters
-    pdf("/out/geometry.pdf")
-    output <- make.geometry(params, plottitle = "Model Geometry")
+    pdf("/out/plots/geometry.pdf")
+    output <- make.geometry(params, plottitle = "Model Geometry", project.path = project.path)
     dev.off()
 
     # save output of make.geometry() for use in other tools
@@ -27,21 +37,26 @@ catlib_write_facmat <- function(params) {
     geom <- readRDS(params$geometry)
     attach(geom)
 
+    # create project folder
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
     # multipliers for scaling saturated hydraulic conductivity
-    write.facmat(output.file = "/out/ksmult.dat")
+    write.facmat(output.file = "/out/CATFLOW/in/ksmult.dat")
 
     # multipliers for scaling saturated water content / porosity
-    write.facmat(output.file = "/out/thsmult.dat")
+    write.facmat(output.file = "/out/CATFLOW/in/thsmult.dat")
 
     # write initial conditions for hydraulic conductivity
     if (params$write_soilhyd_ini) {
-       write.facmat(output.file = "/out/soilhyd.ini",
+       write.facmat(output.file = "/out/CATFLOW/in/soilhyd.ini",
                     headr = paste("PSI ", 0, 1, length(eta), length(xsi), 1))
     }
 
     # write soiltype identifiers
     if (params$write_soil_types) {
-        write.facmat(output.file = "/out/soils.bod",
+        write.facmat(output.file = "/out/CATFLOW/in/soils.bod",
                      headr = paste("BODEN", length(eta), length(xsi), 1),
                      fac = matrix(c(rep(1, ceiling(length(eta) / 2)),
                                     rep(2, floor(length(eta) / 2))),
@@ -101,7 +116,7 @@ catlib_write_control <- function(params) {
     params$project.path <- "/out/CATFLOW"
 
     # create the project folder and set permissions
-    system("mkdir /out/CATFLOW")
+    system("mkdir -p /out/CATFLOW")
     system("chmod 777 /out/CATFLOW")
 
     # build slope.in.list
@@ -127,11 +142,11 @@ catlib_write_control <- function(params) {
 }
 
 catlib_complete_file_structure <- function(params) {
-    # create the project and the in/ folder and set permissions
-    system("mkdir /out/CATFLOW")
-    system("chmod 777 /out/CATFLOW")
-    system("mkdir /out/CATFLOW/in")
-    system("chmod 777 /out/CATFLOW/in")
+    # create the project folder CATFLOW and the in/ folder and set permissions
+    #system("mkdir -p /out/CATFLOW")
+    #system("chmod 777 /out/CATFLOW")
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod -R 777 /out/CATFLOW/in")
 
     # macro.file: "profil.mak"
     cat(paste("1 0 2", "ari", "0.00 1.00 0.00 1.00 1 1.00 1.00 ", sep = "\n"),  file = "/out/CATFLOW/in/profil.mak")
@@ -172,7 +187,7 @@ catlib_complete_file_structure <- function(params) {
 
     # file related to landuse specification
     # create landuse subdirectory and set permissions
-    system("mkdir /out/CATFLOW/in/landuse")
+    system("mkdir -p /out/CATFLOW/in/landuse")
     system("chmod 777 /out/CATFLOW/in/landuse")
 
     # pointer to land-use parameters
@@ -227,7 +242,11 @@ catlib_make_geometry_representative_hillslope <- function(params) {
 
     dev.off()
 
-    project.path <- "/out/CATFLOW"
+    # project path CATFLOW/in/
+    project.path <- "/out/CATFLOW/in"
+    system("mkdir -p /out/CATFLOW/in/")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
 
     # transform hillslope to point table
     hillslope_data_frame <- rasterToPoints(hillslopes)
@@ -273,13 +292,13 @@ catlib_make_geometry_representative_hillslope <- function(params) {
         dyy = 1,                                    # Thickness of profile [m] average of drillings 2.1 m
         xsi = seq(0, 1, length = max(hill$short_rep_hill$short_dist) + 1),  # in order to get every 1m a node length of hillslope + 1             # discretitation
         eta = c(seq(0, 0.60, length = 4), seq(0.80, 1, length = 11)),       # eta starts at the bottom, upper 50 cm, dx=10cm, 50-400cm dx=25 cm
-        out.file = "geometry.geo"       # outpath
+        out.file = "geometry.geo"           # outpath
     )
 
     out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
 
-    # set permissions for CATFLOW directory
-    system("chmod 777 /out/CATFLOW")
+    # save output of make.geometry() for use in other tools
+    saveRDS(out.geom, file = "/out/geom.Rds")
 
     # return to use in workflows
     return(out.geom)
