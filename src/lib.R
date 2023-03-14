@@ -15,6 +15,9 @@ lib_preprocess_catflow <- function(params) {
 
     catlib_write_facmat(params)
 
-    # (3) write precipitation file
+    # (3) write precipitation data file
     catlib_write_precip(params)
+
+    # (4) write climate data file
+    catlib_write_climate(params)
 }

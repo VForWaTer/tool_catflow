@@ -81,7 +81,7 @@ catlib_write_precip <- function(params) {
         params$time.unit,
         params$faktor.p
     )
-    
+
     # create folder for plots
     system("mkdir -p /out/plots")
     system("chmod 777 /out/plots")
@@ -93,11 +93,29 @@ catlib_write_precip <- function(params) {
 }
 
 catlib_write_climate <- function(params) {
+    # create project folder
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
     # output file is always saved to /out/
-    params$output.file <- "/out/clima.dat"
+    params$output.file <- "/out/CATFLOW/in/clima.dat"
 
     # write climate data with params as input
-    do.call(write.climate, params)
+    write.climate(
+        params$climadat,
+        params$output.file,
+        params$start.time,
+        params$time.unit,
+        params$rBilart,
+        params$ref.height,
+        params$sw0,
+        params$sw1,
+        params$sw2,
+        params$trueb,
+        params$truebf,
+        params$NA.flag
+    )
 }
 
 catlib_write_printout <- function(params) {
