@@ -13,6 +13,9 @@ toolname <- tolower(Sys.getenv("TOOL_RUN"))
 # make functions from Catflow-R-Package available
 source("catlib.R")
 
+# workflow functions in lib.R
+source("lib.R")
+
 # default tool make geometry -> future decission for a default tool
 if (toolname == "") {
     toolname <- "make_geometry"
@@ -44,6 +47,9 @@ if (toolname == "make_geometry") {
 
 } else if (toolname == "make_geometry_representative_hillslope") {
     catlib_make_geometry_representative_hillslope(params)
+
+} else if (toolname == "preprocess_catflow") {
+    lib_preprocess_catflow(params)
 
 } else {
     # in any other case, the tool was invalid or not configured

@@ -203,13 +203,13 @@ catlib_make_geometry_representative_hillslope <- function(params) {
     source("hillslope_method.R")
 
     #import spatial data
-    flow_accum <- raster(params$flow_accumulation)        # flowaccumulation Attention should be in log scale (Edit: Not working with log - Ashish)
-    hillslopes <- raster(params$basin)             # !!! entire basin as one hillslope 
+    flow_accum <- raster(params$flow_accumulation)  # flowaccumulation Attention should be in log scale (Edit: Not working with log - Ashish)
+    hillslopes <- raster(params$basin)              # !!! entire basin as one hillslope 
     elev_2_river <- raster(params$elevation2river)  # elevation to !!!elev2riv_mod !!! (because of failed calculation areas, gasp are filled with values of SAGA calculation)
-    dist_2_river <- raster(params$distance2river)  # distance to river
-    dem <- raster(params$dem)           # digital elevation modell
-    aspect <- raster(params$aspect)            # aspect
-    river_id <- raster(params$river_id)  # stream link id
+    dist_2_river <- raster(params$distance2river)   # distance to river
+    dem <- raster(params$dem)                       # digital elevation modell
+    aspect <- raster(params$aspect)                 # aspect
+    river_id <- raster(params$river_id)             # stream link id
 
     # plot spatial data
     system("mkdir /out/plots")
@@ -280,4 +280,7 @@ catlib_make_geometry_representative_hillslope <- function(params) {
 
     # set permissions for CATFLOW directory
     system("chmod 777 /out/CATFLOW")
+
+    # return to use in workflows
+    return(out.geom)
 }

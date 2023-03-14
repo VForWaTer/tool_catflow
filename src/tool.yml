@@ -470,3 +470,30 @@ tools:
       river_id:
         type: file
         description: .tif file for river id.
+  preprocess_catflow:
+    title: CATFLOW data preprocessing and creation of CATFLOW folder structure
+    description: |
+      Preprocess data, get geometry as a representative hillslope from .tif files.
+    version: 0.1
+    parameters:
+      flow_accumulation:
+        type: file
+        description: Flow accumulation .tif file.
+      basin:
+        type: file
+        description: .tif file for the entire basin as one hillslope.
+      elevation2river:
+        type: file
+        description: .tif file for elevation to river.
+      distance2river:
+        type: file
+        description: .tif file for the distance to river.
+      dem:
+        type: file
+        description: Digital elevation model (DEM).
+      aspect:
+        type: file
+        description: .tif file for aspect.
+      river_id:
+        type: file
+        description: .tif file for river id.

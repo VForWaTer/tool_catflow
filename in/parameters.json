@@ -65,5 +65,14 @@
         "dem": "./in/geoprocessing/dem.tif",
         "aspect": "./in/geoprocessing/aspect.tif",
         "river_id": "./in/geoprocessing/river_id.tif"
+    },
+    "preprocess_catflow": {
+        "flow_accumulation": "./in/geoprocessing/flow_accumulation.tif",
+        "basin": "./in/geoprocessing/basin.tif",
+        "elevation2river": "./in/geoprocessing/elev2riv.tif",
+        "distance2river": "./in/geoprocessing/dist2riv.tif",
+        "dem": "./in/geoprocessing/dem.tif",
+        "aspect": "./in/geoprocessing/aspect.tif",
+        "river_id": "./in/geoprocessing/river_id.tif"
     }
 }
