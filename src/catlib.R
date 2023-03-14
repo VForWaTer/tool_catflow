@@ -295,7 +295,10 @@ catlib_make_geometry_representative_hillslope <- function(params) {
         out.file = "geometry.geo"           # outpath
     )
 
+    # make geometry from hillslope parameters
+    pdf("/out/plots/geometry.pdf")
     out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+    dev.off()
 
     # save output of make.geometry() for use in other tools
     saveRDS(out.geom, file = "/out/geom.Rds")
