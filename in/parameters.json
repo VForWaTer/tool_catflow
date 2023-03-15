@@ -88,6 +88,10 @@
         "NA.flag": -999,
         "end.time": "03.01.2004 00:00:00",
         "intervall": 0.5,
-        "flag": 1
+        "flag": 1,
+        "lu": 33,
+        "precid": 1,
+        "climid": 1,
+        "windid": [1, 1, 1, 1]
     }
 }

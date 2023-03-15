@@ -70,13 +70,10 @@ catlib_write_precip <- function(params) {
     system("chmod 777 /out/CATFLOW")
     system("chmod 777 /out/CATFLOW/in")
 
-    # output file is always saved to /out/CATFLOW/in/
-    params$output.file <- "/out/CATFLOW/in/rain.dat"
-
     # write precipitation data with params as input
     write.precip(
         raindat = params$raindat,
-        output.file = params$output.file,
+        output.file = "/out/CATFLOW/in/rain.dat",
         start.time = params$start.time,
         time.unit = params$time.unit,
         faktor.p = params$faktor.p
@@ -98,13 +95,10 @@ catlib_write_climate <- function(params) {
     system("chmod 777 /out/CATFLOW")
     system("chmod 777 /out/CATFLOW/in")
 
-    # output file is always saved to /out/
-    params$output.file <- "/out/CATFLOW/in/clima.dat"
-
     # write climate data with params as input
     write.climate(
         climadat = params$climadat,
-        output.file = params$output.file,
+        output.file = "/out/CATFLOW/in/clima.dat",
         start.time = params$start.time,
         time.unit = params$time.unit,
         rBilart = params$rBilart,
@@ -124,12 +118,9 @@ catlib_write_printout <- function(params) {
     system("chmod 777 /out/CATFLOW")
     system("chmod 777 /out/CATFLOW/in")
 
-    # output file is always saved to /out/
-    params$output.file <- "/out/CATFLOW/in/printout.prt"
-
     # write printout times
     write.printout(
-        output.file = params$output.file,
+        output.file = "/out/CATFLOW/in/printout.prt",
         start.time = params$start.time,
         end.time = params$end.time,
         intervall = params$intervall,
@@ -143,14 +134,23 @@ catlib_write_surface_pob <- function(params) {
     geom <- readRDS(params$geometry)
     attach(geom)
 
+    # create project folder
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
     # drop geometry from params (unused in write.surface.pob)
     params$geometry <- NULL
 
-    # output file is always saved to /out/
-    params$output.file <- "/out/surface.pob"
-
     # write surface attributes
-    do.call(write.surface.pob, params)
+    write.surface.pob(
+        output.file = "/out/CATFLOW/in/surface.pob",
+        xs = xsi,
+        lu = params$lu,
+        precid = params$precid,
+        climid = params$climid,
+        windid = params$windid
+    )
 }
 
 catlib_write_control <- function(params) {
@@ -188,8 +188,6 @@ catlib_write_control <- function(params) {
 
 catlib_complete_file_structure <- function(params) {
     # create the project folder CATFLOW and the in/ folder and set permissions
-    #system("mkdir -p /out/CATFLOW")
-    #system("chmod 777 /out/CATFLOW")
     system("mkdir -p /out/CATFLOW/in")
     system("chmod -R 777 /out/CATFLOW/in")
 

@@ -6,7 +6,7 @@ lib_preprocess_catflow <- function(params) {
     # (1) make geometry from .tif files
     catlib_make_geometry_representative_hillslope(params)
 
-    # geom.Rds produced above as input for other ttols
+    # geom.Rds produced above as input for other tools
     params$geometry <- "/out/geom.Rds"
 
     # (2) create ksmult.dat, thsmult.dat, soilhyd.ini, soils.bod
@@ -23,4 +23,7 @@ lib_preprocess_catflow <- function(params) {
 
     # (5) write printout file
     catlib_write_printout(params)
+
+    # (6) write surface pob file
+    catlib_write_surface_pob(params)
 }

@@ -579,3 +579,29 @@ tools:
       first.time:
         type: string
         description: First printout time ("%d.%m.%Y %H:%M:%S")
+      lu:
+        type: integer
+        array: true
+        description: |
+          Land-use ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      climid:
+        type: integer
+        array: true
+        description: |
+          Climate ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      precid:
+        type: integer
+        array: true
+        description: |
+          Climate ID: either a single number to be assigned to all surface 
+          nodes, or a vector of numbers of same length as xs
+      windid:
+        type: integer
+        array: true
+        description: |
+          Wind direction ID: either a vector of numbers representing different 
+          wind direction sectors which are to be assigned to all surface nodes, 
+          or a matrix of numbers with the same number of rows as xsi and as 
+          many columns as there are wind direction sectors (default: 4 sectors)
