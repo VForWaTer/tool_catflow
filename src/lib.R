@@ -20,4 +20,7 @@ lib_preprocess_catflow <- function(params) {
 
     # (4) write climate data file
     catlib_write_climate(params)
+
+    # (5) write printout file
+    catlib_write_printout(params)
 }

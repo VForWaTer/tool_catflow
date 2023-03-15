@@ -562,3 +562,20 @@ tools:
       NA.flag:
         type: float
         description: Flag for NA in the input data
+      end.time:
+        type: string
+        description: End date for the simulation ("%d.%m.%Y %H:%M:%S")
+      length.prt:
+        type: integer
+        description: Length of printout record
+      intervall:
+        type: float
+        description: Time interval between printout times
+      flag:
+        type: integer
+        description: |
+          Flag controlling the amount of output at printout times, eventually a 
+          vector (1: dump all; 0: dump for surface nodes)
+      first.time:
+        type: string
+        description: First printout time ("%d.%m.%Y %H:%M:%S")

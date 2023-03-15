@@ -76,6 +76,18 @@
         "raindat": "./in/raindat.csv",
         "start.time": "01.01.2004 00:00:00",
         "time.unit": "h",
-        "faktor.p": 1
+        "faktor.p": 1,
+        "climadat": "./in/climadat.csv",
+        "rBilart": 1,
+        "ref.height": 8,
+        "sw0": -6,
+        "sw1": 0.7,
+        "sw2": 2.8e-4,
+        "trueb": 1.5,
+        "truebf": 0.1,
+        "NA.flag": -999,
+        "end.time": "03.01.2004 00:00:00",
+        "intervall": 0.5,
+        "flag": 1
     }
 }
