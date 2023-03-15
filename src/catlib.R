@@ -75,11 +75,11 @@ catlib_write_precip <- function(params) {
 
     # write precipitation data with params as input
     write.precip(
-        params$raindat,
-        params$output.file,
-        params$start.time,
-        params$time.unit,
-        params$faktor.p
+        raindat = params$raindat,
+        output.file = params$output.file,
+        start.time = params$start.time,
+        time.unit = params$time.unit,
+        faktor.p = params$faktor.p
     )
 
     # create folder for plots
@@ -103,27 +103,39 @@ catlib_write_climate <- function(params) {
 
     # write climate data with params as input
     write.climate(
-        params$climadat,
-        params$output.file,
-        params$start.time,
-        params$time.unit,
-        params$rBilart,
-        params$ref.height,
-        params$sw0,
-        params$sw1,
-        params$sw2,
-        params$trueb,
-        params$truebf,
-        params$NA.flag
+        climadat = params$climadat,
+        output.file = params$output.file,
+        start.time = params$start.time,
+        time.unit = params$time.unit,
+        rBilart = params$rBilart,
+        ref.height = params$ref.height,
+        sw0 = params$sw0,
+        sw1 = params$sw1,
+        sw2 = params$sw2,
+        trueb = params$trueb,
+        truebf = params$truebf,
+        NA.flag = params$NA.flag
     )
 }
 
 catlib_write_printout <- function(params) {
+    # create project folder
+    system("mkdir -p /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
+
     # output file is always saved to /out/
-    params$output.file <- "/out/printout.prt"
+    params$output.file <- "/out/CATFLOW/in/printout.prt"
 
     # write printout times
-    do.call(write.printout, params)
+    write.printout(
+        output.file = params$output.file,
+        start.time = params$start.time,
+        end.time = params$end.time,
+        intervall = params$intervall,
+        time.unit = params$time.unit,
+        flag = params$flag
+    )
 }
 
 catlib_write_surface_pob <- function(params) {
