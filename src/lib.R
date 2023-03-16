@@ -26,4 +26,7 @@ lib_preprocess_catflow <- function(params) {
 
     # (6) write surface pob file
     catlib_write_surface_pob(params)
+
+    # (7) write controll file
+    catlib_write_control(params)
 }
