@@ -190,7 +190,8 @@ catlib_write_control <- function(params) {
 catlib_complete_file_structure <- function(params) {
     # create the project folder CATFLOW and the in/ folder and set permissions
     system("mkdir -p /out/CATFLOW/in")
-    system("chmod -R 777 /out/CATFLOW/in")
+    system("chmod 777 /out/CATFLOW")
+    system("chmod 777 /out/CATFLOW/in")
 
     # macro.file: "profil.mak"
     cat(paste("1 0 2", "ari", "0.00 1.00 0.00 1.00 1 1.00 1.00 ", sep = "\n"),  file = "/out/CATFLOW/in/profil.mak")
