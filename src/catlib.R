@@ -154,36 +154,37 @@ catlib_write_surface_pob <- function(params) {
 }
 
 catlib_write_control <- function(params) {
-    # output file is always called catflow.in
-    params$output.file <- "run_cat.in"
-
-    # project.path is always /out/CATFLOW
-    params$project.path <- "/out/CATFLOW"
-
     # create the project folder and set permissions
     system("mkdir -p /out/CATFLOW")
     system("chmod 777 /out/CATFLOW")
 
-    # build slope.in.list
-    params$slope.in.list <- list(
-        slope1 = list(
-            geo.file = "test.geo",
-            soil.file = "soils.bod",
-            ks.fac = "ksmult.dat",
-            ths.fac = "thsmult.dat",
-            macro.file = "profil.mak",
-            cv.file = "cont_vol.cv",
-            ini.file = "soilhyd.ini",
-            print.file = "printout.prt",
-            surf.file = "surface.pob",
-            bc.file = "boundary.rb"
-            ))
-
     # write project controll file
-    do.call(write.control, params)
+    write.control(
+        output.file = "run_cat.in",
+        project.path = "/out/CATFLOW",
+        start.date = params$start.date,
+        end.date = params$end.date,
+        slope.in.list = list(
+            slope1 = list(
+                geo.file = "geometry.geo",
+                soil.file = "soils.bod",
+                ks.fac = "ksmult.dat",
+                ths.fac = "thsmult.dat",
+                macro.file = "profil.mak",
+                cv.file = "cont_vol.cv",
+                ini.file = "soilhyd.ini",
+                print.file = "printout.prt",
+                surf.file = "surface.pob",
+                bc.file = "boundary.rb"
+            )
+        )
+    )
 
     # write main control file
-    write.CATFLOW.IN(params$output.file, project.path = params$project.path)
+    write.CATFLOW.IN(
+        control.files = "run_cat.in",
+        project.path = "/out/CATFLOW"
+    )
 }
 
 catlib_complete_file_structure <- function(params) {
