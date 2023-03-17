@@ -29,4 +29,7 @@ lib_preprocess_catflow <- function(params) {
 
     # (7) write controll file
     catlib_write_control(params)
+
+    # (8) complete the CATFLOW file structure
+    catlib_complete_file_structure(params)
 }
