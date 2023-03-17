@@ -162,8 +162,8 @@ catlib_write_control <- function(params) {
     write.control(
         output.file = "run_cat.in",
         project.path = "/out/CATFLOW",
-        start.date = params$start.date,
-        end.date = params$end.date,
+        start.date = params$start.time,
+        end.date = params$end.time,
         slope.in.list = list(
             slope1 = list(
                 geo.file = "geometry.geo",
@@ -236,23 +236,23 @@ catlib_complete_file_structure <- function(params) {
     system("chmod 777 /out/CATFLOW/in/landuse")
 
     # pointer to land-use parameters
-    cat(paste("3", "coniferous forest", "in/landuse/conif.par", sep = " ", file = "/out/CATFLOW/in/landuse/lu_file.def"))
+    cat(paste("3", "coniferous forest", "in/landuse/conif.par", sep = "              "), file = "/out/CATFLOW/in/landuse/lu_file.def")
 
     # time-series of land-use parameters
     cat(paste("01.01.2004 00:00:00.00", "in/landuse/lu_set1.dat", "01.01.2005 00:00:00.00", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_ts.dat")
 
     # land-use parameters
     cat(paste(
-         paste("2", "KST", "MAK", "BFI", "BBG", "TWU", "PFH",
-               "PALB", "RSTMIN", "WP_BFW", "F_BFW", sep = " "),
-         "0. 3. 1. 5. 0.95 5.0 5.0 0.15 1.",
-         paste(c("1 ", "366"),
-               "2. 1. 1. 1.0 1.0 1.0 1.0 546. 0.0530.",
-         sep = " ", collapse = "\n"), sep = "\n"),
+         paste("10", "KST", "MAK", "BFI", "BBG", "TWU", "PFH",
+               "PALB", "RSTMIN", "WP_BFW", "F_BFW", sep = "    "),
+         "0.    3.    1.    5.    0.95    5.0    5.0    0.15    1.    1.    1.",
+         paste(c(" 1", "366"),
+               "2.    1.    1.    1.0    1.0    1.0    1.0    546.    0.05    30.",
+         sep = "    ", collapse = "\n"), sep = "\n"),
      file = "/out/CATFLOW/in/landuse/conif.par")
 
     # pointer to surface node attributes
-    cat(paste(1, "33 3 %coniferous forest", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_set1.dat")
+    cat(paste(1, "33    3    %coniferous forest", sep = "\n"), file = "/out/CATFLOW/in/landuse/lu_set1.dat")
 }
 
 catlib_make_geometry_representative_hillslope <- function(params) {
