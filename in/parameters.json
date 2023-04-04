@@ -93,5 +93,11 @@
         "precid": 1,
         "climid": 1,
         "windid": [1, 1, 1, 1]
-    }
+    },
+    "timeseries_to_catflow_precip": {
+        "raindat": "./in/raindat.csv",
+        "start.time": "01.01.2004 00:00:00",
+        "time.unit": "h",
+        "faktor.p": 1
+    } 
 }

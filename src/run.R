@@ -51,6 +51,14 @@ if (toolname == "make_geometry") {
 } else if (toolname == "preprocess_catflow") {
     lib_preprocess_catflow(params)
 
+} else if (toolname == "timeseries_to_catflow_precip") {
+    lib_timeseries_to_catflow_precip(
+        data = params$data,
+        start.time = params$start.time,
+        time.unit = params$time.unit,
+        faktor.p = params$faktor.p
+        )
+        
 } else {
     # in any other case, the tool was invalid or not configured
     print(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep = ""))

@@ -604,4 +604,33 @@ tools:
           Wind direction ID: either a vector of numbers representing different 
           wind direction sectors which are to be assigned to all surface nodes, 
           or a matrix of numbers with the same number of rows as xsi and as 
-          many columns as there are wind direction sectors (default: 4 sectors)
+          many columns as there are wind direction sectors (default: 4 sectors).
+  timeseries_to_catflow_precip:
+    title: Convert precipitation timeseries to CATFLOW specific format
+    description: |
+      CATFLOW requires a precipitation record from which the rainfall intensities 
+      are interpolated between discrete time steps; rainfall intensities are thus 
+      only needed at those time steps when they are changing.
+      This tool converts a precipitation timeseries to CATFLOW specific format.
+    version: 0.1
+    parameters:
+      data:
+        type: file
+        description: |
+          Rainfall data: data frame with two columns; first column must be 
+          timestamps ("%Y-%m-%d %H:%M:%S"), the second column contains the
+          precipitation data.
+      start.time: 
+        type: string
+        description: Start date for the simulation ("%Y-%m-%d %H:%M:%S")
+        optional: true
+      time.unit: 
+        type: string
+        description: Time units of the precipitation record
+        default: "h"
+      faktor.p:
+        type: float
+        description: |
+          Conversion factor for rain rate to m/s (only needed if rate is NOT 
+          given as mm per 'time.unit')
+        optional: true
