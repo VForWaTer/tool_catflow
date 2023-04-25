@@ -1,6 +1,7 @@
-# tool_template_r
+# CATFLOW preprocessing tool
 
-This is the template for a generic containerized R tool. This template can be used to generate new Github repositories from it.
+Pre- and postprocessing for CATFLOW using functions from the [Catflow-R-Package](https://github.com/CATFLOW/Catflow-R-Package).  
+The implementation follows the [Tool Specification](https://vforwater.github.io/tool-specs/) for reusable research software using Docker.
 
 ## How generic?
 
