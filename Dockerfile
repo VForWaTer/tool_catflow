@@ -4,12 +4,9 @@ FROM r-base:4.2.0
 # the parameter parsing function always needs the rjson and yaml packages
 RUN R -e "install.packages(c('jsonlite', 'yaml'))"
 
-# install json2aRgs v0.3.0 to parse parameters from /in/parameters.json
-RUN wget -q https://cran.r-project.org/src/contrib/json2aRgs_0.3.0.tar.gz
-RUN R CMD INSTALL json2aRgs_0.3.0.tar.gz
-
-# remove json2aRgs tarball
-RUN rm json2aRgs_0.3.0.tar.gz
+# install json2aRgs latest version from github
+RUN R -e 'install.packages("remotes")'
+RUN R -e 'remotes::install_github("VForWaTer/json2aRgs")'
 
 # install Catflow-R-Package dependencies
 RUN R -e "install.packages(c('deSolve', 'RColorBrewer', 'zoo', 'xts'))"
