@@ -35,7 +35,8 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   # safty check if hillslope_nr is set to zero
   if(hillslope_nr == 0) stop("---Do not use hillslope_nr = 0---")
   
-  hill <- hillslope_as_pts[hillslope_as_pts[,3]==hillslope_nr,]
+  if(hillslope_nr == -1) hill <- hillslope_as_pts # Untested - Ashish 06.08.2024
+  else hill <- hillslope_as_pts[hillslope_as_pts[,3]==hillslope_nr,]
   
   #extract number of cells and area of hillslope
   number_of_cells <- length(hill[,1])
