@@ -4,7 +4,7 @@
             "hillslope_id" : -1,
             "no_flow_area" : 0.30,
             "min_cells:" : 10,
-            "hill_type" : 'constant',
+            "hill_type" : "constant",
             "depth:" : 2.1
         }  
     }
