@@ -76,6 +76,15 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     # assign homogenous width to hill object
     hill$short_rep_hill$short_width_corr <- rep(c(w), length(hill$short_rep_hill$short_dist))    # Width
 
+    # Assign values to x based on the value of params$hill_type
+    if (params$hill_type == "constant") {
+    htyp <- 1
+    } else if (params$hill_type == "cake") {
+    htyp <- 2
+    } else if (params$hill_type == "variable") {
+    htyp <- 3
+    } 
+    
     # slope.list as input for make_geometry
     topo <- list(
         xh = hill$short_rep_hill$east,              # East
@@ -84,7 +93,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         bh = hill$short_rep_hill$short_width_corr,  # Width
         dist = hill$short_rep_hill$short_dist,
         tot.area = hill$area,                       # Area
-        htyp = params$hill_type,                                   # Hillslope type
+        htyp = htyp,                                   # Hillslope type
         dyy = params$depth,                                    # Thickness of profile [m] average of drillings 2.1 m
         xsi = seq(0, 1, length = max(hill$short_rep_hill$short_dist) + 1),  # in order to get every 1m a node length of hillslope + 1             # discretitation
         eta =  c(seq(0,0.625,length=6),seq(0.7,0.85, length=3),seq(0.875,1, length=6)),       # eta starts at the bottom, upper 50 cm, dx=10cm, 50-400cm dx=25 cm
