@@ -14,7 +14,7 @@ toolname <- tolower(Sys.getenv("TOOL_RUN"))
 source("catlib.R")
 
 # workflow functions in lib.R
-source("lib.R")
+source("lib_old.R")
 
 # default tool make geometry -> future decission for a default tool
 if (toolname == "") {
