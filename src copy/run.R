@@ -23,5 +23,3 @@ if (toolname == "make_representative_hillslope") {
     # in any other case, the tool was invalid or not configured
     print(paste("[", Sys.time(), "] Either no TOOL_RUN environment variable available, or '", toolname, "' is not valid.\n", sep = "")) # nolint: line_length_linter.
 }
-
-# HELLO ASHISH!!!

@@ -41,29 +41,36 @@ tools:
       data:
         flow_accumulation:
           example: /in/flow_accumulation.tif
-          extension: tiff
+          extension: 
+          -tiff
           description: Flow accumulation .tif file.
         hillslopes:
           example: /in/hillslope.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: .tif file for hillslopes.
         elev2river:
           example: /in/elevation.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: .tif file for elevation to river.
         dist2river:
           example: /in/distance.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: .tif file for the distance to river.
         filled_dem:
           example: /in/fill_DEM.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: Filled Digital elevation model (DEM).
         aspect:
           example: /in/aspect.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: .tif file for aspect.
         river_id:
           example: /in/streams.tif
-          extension: tiff
+          extension:  
+          -tiff
           description: .tif file for river network.
