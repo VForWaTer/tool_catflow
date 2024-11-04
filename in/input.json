@@ -3,9 +3,19 @@
         "parameters":{ 
             "hillslope_id" : -1,
             "no_flow_area" : 0.30,
-            "min_cells:" : 10,
+            "min_cells" : 10,
             "hill_type" : "constant",
-            "depth:" : 2.1
-        }  
+            "depth" : 2.1
+        },
+        "data":{ 
+            "flow_accumulation" : "/in/flow_accumulation.tif",
+            "hillslopes" : "/in/hillslope.tif",
+            "elev2river" : "/in/elevation.tif",
+            "dist2river" : "/in/distance.tif",
+            "filled_dem" : "/in/fill_DEM.tif",
+            "aspect" : "/in/aspect.tif",
+            "river_id" : "/in/streams.tif"
+        } 
+
     }
 }
