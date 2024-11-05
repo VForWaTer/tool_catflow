@@ -1,8 +1,9 @@
 This is a docker commands file used only for development and testing - AMJ
 Will be deleted in final version
+Clear out folder before running the tool till final version
 docker ps
 docker build -t catflow .
-docker run --rm -it -v /home/hiwi/development/tool_catflow/in:/in -v /home/hiwi/development/tool_catflow/src:/src -v /home/hiwi/development/tool_catflow/out:/out  catflow bash
+docker run --rm -it -v /home/ashish/tool_catflow/in:/in -v /home/ashish/tool_catflow/src:/src -v /home/ashish/tool_catflow/out:/out  catflow bash
 export TOOL_RUN=make_representative_hillslope
-Rscipt run.R
+Rscript run.R
 exit
