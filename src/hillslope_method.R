@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------------------
 # Hillslope wizzard developed by Ralf Loritz (2015)
-# Version 0.0000134 :P
+# Version 0.1
 # Delination of 2D catenas from hillslopes. The hillslope, dist2river, elev2river and accumulation maps
 # where extracte using Whitebox GIS in combination Grass GIS. The idea behind this code is based on a approach from 
 # Francke et al. 2006 (Automated catena-based discretization of landscapes for the derivation of hydrological modelling units)
@@ -35,7 +35,8 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   # safty check if hillslope_nr is set to zero
   if(hillslope_nr == 0) stop("---Do not use hillslope_nr = 0---")
   
-  hill <- hillslope_as_pts[hillslope_as_pts[,3]==hillslope_nr,]
+  if(hillslope_nr == -1) hill <- hillslope_as_pts # hillslope_nr = -1 means that the entire hillslope is used
+  else hill <- hillslope_as_pts[hillslope_as_pts[,3]==hillslope_nr,]
   
   #extract number of cells and area of hillslope
   number_of_cells <- length(hill[,1])
@@ -202,13 +203,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
                     'hillslope_nr'=hillslope_nr
                     )
     cat('  ____________ 
-< Hillslope fini!> 
-  ------------ 
-    \\   ^__^ 
-     \\  (oo)\\_______ 
-        (..)\        )\\/\\ 
-            ||----w | 
-            ||     || ')
+< Hillslope finished successfully!! ')
     
     
   } else {li_hill <- list('final_hill' = data.frame('east'=x, 'north'=y,
@@ -222,7 +217,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
                           'hillslope_nr'=hillslope_nr
                          )
   
-         print('Hillslope to small or to short!')
+         print('Hillslope too small or too short!')
          }
   return(li_hill)
 }
