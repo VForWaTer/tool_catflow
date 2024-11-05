@@ -1,4 +1,5 @@
 This is a docker commands file used only for development and testing - AMJ
+Will be deleted in final version
 docker ps
 docker build -t catflow .
 docker run --rm -it -v /home/hiwi/development/tool_catflow/in:/in -v /home/hiwi/development/tool_catflow/src:/src -v /home/hiwi/development/tool_catflow/out:/out  catflow bash
