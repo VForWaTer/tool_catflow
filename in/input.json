@@ -27,5 +27,14 @@
         },
         "data":{ 
         } 
-    }    
+    },
+    "write_multipliers": {
+        "parameters":{ 
+            "fac_kst":1
+        },
+        "data":{ 
+            "geometry" : "/in/rep_hill.geo"
+        } 
+    }       
+
 }

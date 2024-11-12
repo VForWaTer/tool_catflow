@@ -140,7 +140,7 @@ system("chmod 777  /out/CATFLOW/in/control")
 
 }
 
-define_run_printouts <- function(params,data_paths) {
+write_multipliers <- function(params,data_paths) {
 # Output folder
 system("mkdir -p /out/CATFLOW/in/")
 system("mkdir -p  /out/CATFLOW/in/soil")
@@ -149,15 +149,15 @@ system("chmod 777 /out/CATFLOW/in")
 system("chmod 777  /out/CATFLOW/in/soil")
 
 # Assume that rep_hill.geo is already created 
-geometry = read.geofile('out/CATFLOW/in/hillgeo/rep_hill.geo')
+geometry = read.geofile(data_paths$geometry) # This may have to be changed in final version!!!
 
 # write ksmult and thsmult
     write.facmat(
-        output.file = "/out/CATFLOW/in/soil/ksmult0.dat",
+        output.file = "/out/CATFLOW/in/soil/ksmult0.dat", et=geometry$eta, xs=geometry$xsi,
         fac = params$fac_kst
     )
     write.facmat(
-        output.file = "/out/CATFLOW/in/soil/thsmult0.dat",
+        output.file = "/out/CATFLOW/in/soil/thsmult0.dat", et=geometry$eta, xs=geometry$xsi,
         fac = params$fac_ths
     )
 

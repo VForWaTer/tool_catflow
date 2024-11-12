@@ -95,6 +95,27 @@ tools:
               Flag controlling the amount of output at printout times, eventually a 
               vector (1: dump all; 0: dump for surface nodes)
             default: 1    
-      data:    
-      
-            
+    write_multipliers:
+      title: Creates the multiplier files.
+      description: |
+        Writes the files ksmulto and thsmult.
+        Usually the factor is 1. but can be optionally used to have other scaling factors  for saturated hydrualic conductivity and soil theta.
+      parameters: 
+        fac_kst:
+          type: float
+          description: Scaling factor for saturated hydrualic conductivity
+          default: 1
+        fac_ths:
+          type: float
+          description: Scaling factor for soil theta
+          default: 1  
+      data: 
+        geometry:
+          example: /in/rep_hill.geo
+          extension: .geo
+          description: .geo file for the hillslope geometry
+
+
+
+
+
