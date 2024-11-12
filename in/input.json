@@ -16,6 +16,16 @@
             "aspect" : "/in/aspect.tif",
             "river_id" : "/in/streams.tif"
         } 
-
-    }
+    },
+    "define_run_printouts": {
+        "parameters":{ 
+            "start.time" : "01.01.2008 00:00:00",
+            "end.time" : "31.12.2015 00:00:00",
+            "interval" : 12,
+            "time.unit" : "hourly",
+            "flag" : 1
+        },
+        "data":{ 
+        } 
+    }    
 }
