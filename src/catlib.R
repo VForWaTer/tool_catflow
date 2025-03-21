@@ -39,10 +39,12 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     dev.off()
 
     # project path CATFLOW/in/
-    project.path <- "/out/CATFLOW/in"
+    project.path <- "/out/CATFLOW/in/hillgeo"
     system("mkdir -p /out/CATFLOW/in/")
+    system("mkdir -p  /out/CATFLOW/in/hillgeo")
     system("chmod 777 /out/CATFLOW")
     system("chmod 777 /out/CATFLOW/in")
+    system("chmod 777  /out/CATFLOW/in/hillgeo")
 
     # transform hillslope to point table
     hillslope_data_frame <- rasterToPoints(hillslopes)
@@ -110,4 +112,53 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
     # return to use in workflows
     return(out.geom)
+}
+
+define_run_printouts <- function(params,data_paths) {
+# Output folder
+system("mkdir -p /out/CATFLOW/in/")
+system("mkdir -p  /out/CATFLOW/in/control")
+system("chmod 777 /out/CATFLOW")
+system("chmod 777 /out/CATFLOW/in")
+system("chmod 777  /out/CATFLOW/in/control")
+
+# Assign values to x based on the value of params$hill_type
+    if (params$time.unit == "hourly") {
+    typ <- 'h'
+    } else if (params$hill_type == "seconds") {
+    typ <- 's'
+    } 
+# write printout times
+    write.printout(
+        output.file = "/out/CATFLOW/in/control/printout.prt",
+        start.time = params$start.time,
+        end.time = params$end.time,
+        intervall = params$interval,
+        time.unit = typ,
+        flag = params$flag
+    )
+
+}
+
+write_multipliers <- function(params,data_paths) {
+# Output folder
+system("mkdir -p /out/CATFLOW/in/")
+system("mkdir -p  /out/CATFLOW/in/soil")
+system("chmod 777 /out/CATFLOW")
+system("chmod 777 /out/CATFLOW/in")
+system("chmod 777  /out/CATFLOW/in/soil")
+
+# Assume that rep_hill.geo is already created 
+geometry = read.geofile(data_paths$geometry) # This may have to be changed in final version!!!
+
+# write ksmult and thsmult
+    write.facmat(
+        output.file = "/out/CATFLOW/in/soil/ksmult0.dat", et=geometry$eta, xs=geometry$xsi,
+        fac = params$fac_kst
+    )
+    write.facmat(
+        output.file = "/out/CATFLOW/in/soil/thsmult0.dat", et=geometry$eta, xs=geometry$xsi,
+        fac = params$fac_ths
+    )
+
 }

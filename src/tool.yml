@@ -67,3 +67,55 @@ tools:
           example: /in/streams.tif
           extension: .tif
           description: .tif file for river network.
+    define_run_printouts:
+      title: Creates the printout times for the Model run 
+      description: |
+        Writes a file with printout times for a CATFLOW simulation.
+        This file defines how frequently outputs are saved and dispalyed during the run
+      parameters: 
+        start.time:
+          type: string
+          description: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
+        end.time:
+          type: string
+          description: End date for the simulation ("%d.%m.%Y %H:%M:%S")  
+        interval:
+          type: integer
+          description: Time interval between printout times
+        time.unit:
+            type: enum
+            description: |
+              Time units of printout times (Currently only tested for hours and seonds)
+            values:
+              - hourly
+              - seconds  
+        flag:
+            type: integer
+            description: |
+              Flag controlling the amount of output at printout times, eventually a 
+              vector (1: dump all; 0: dump for surface nodes)
+            default: 1    
+    write_multipliers:
+      title: Creates the multiplier files.
+      description: |
+        Writes the files ksmulto and thsmult.
+        Usually the factor is 1. but can be optionally used to have other scaling factors  for saturated hydrualic conductivity and soil theta.
+      parameters: 
+        fac_kst:
+          type: float
+          description: Scaling factor for saturated hydrualic conductivity
+          default: 1
+        fac_ths:
+          type: float
+          description: Scaling factor for soil theta
+          default: 1  
+      data: 
+        geometry:
+          example: /in/rep_hill.geo
+          extension: .geo
+          description: .geo file for the hillslope geometry
+
+
+
+
+
