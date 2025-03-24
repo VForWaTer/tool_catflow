@@ -3,7 +3,14 @@ Will be deleted in final version
 Clear out folder before running the tool till final version
 docker ps
 docker build -t catflow .
-docker run --rm -it -v /home/ashish/tool_catflow/in:/in -v /home/ashish/tool_catflow/src:/src -v /home/ashish/tool_catflow/out:/out  catflow bash
+docker run --rm -it `
+  -v "E:/bwsync&share/01_Analysis/04_catflow_semiautomatic/in:/in" `
+  -v "E:/bwsync&share/01_Analysis/04_catflow_semiautomatic/src:/src" `
+  tool_whiteboxgis bash
 export TOOL_RUN=make_representative_hillslope
 Rscript run.R
 exit
+
+
+
+install.packages("https://github.com/CATFLOW/Catflow-R-Package/archive/refs/heads/main.tar.gz", repos = NULL, type = "source")
