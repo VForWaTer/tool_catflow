@@ -4,9 +4,9 @@ Clear out folder before running the tool till final version
 docker ps
 docker build -t catflow .
 docker run --rm -it `
-  -v "E:/bwsync&share/01_Analysis/04_catflow_semiautomatic/in:/in" `
-  -v "E:/bwsync&share/01_Analysis/04_catflow_semiautomatic/src:/src" `
-  tool_whiteboxgis bash
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" `  
+  catflow  bash
 export TOOL_RUN=make_representative_hillslope
 Rscript run.R
 exit
