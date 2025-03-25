@@ -1,5 +1,5 @@
 # Pull any base image that includes R
-FROM rocker/geospatial
+FROM rocker/geospatial:4.4.1
 
 # the parameter parsing function always needs the rjson and yaml packages
 RUN R -e "install.packages(c('jsonlite', 'yaml'))"
@@ -20,11 +20,8 @@ COPY ./src /src
 
 RUN R -e "install.packages(c('raster'))"
 
-# download latest version of Catflow-R-Package from github, untar and rename
-RUN wget -qO- https://github.com/CATFLOW/Catflow-R-Package/archive/refs/heads/main.tar.gz | tar xz -C src/ && mv /src/Catflow-R-Package-main /src/Catflow-R-Package
-
 # install Catflow-R-Package from source
-RUN R -e "install.packages('/src/Catflow-R-Package/Catflow', repos = NULL, type = 'source')"
+RUN R -e "install.packages('/src/Catflow_0.998_v2.tar.gz', repos = NULL, type = 'source')"
 
 # install representative hillslope dependencies
 # Download rgdal package archive, untar, and rename
@@ -33,8 +30,6 @@ RUN wget -qO- https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.t
 # Install rgdal package from source
 RUN R -e "install.packages('/src/rgdal', repos = NULL, type = 'source')"
 
-# delete Catflow-R-Pacakge source code
-RUN rm -rf /src/Catflow-R-Package
 
 WORKDIR /src
 CMD ["Rscript", "run.R"]

@@ -13,4 +13,9 @@ exit
 
 
 
-install.packages("https://github.com/CATFLOW/Catflow-R-Package/archive/refs/heads/main.tar.gz", repos = NULL, type = "source")
+install.packages("https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz", repos = NULL, type = "source")
+
+install.packages("Catflow-R-Package-devel.tar.gz", repos = NULL, type = "source")
+
+
+install.packages("Catflow_0.998_v2.tar.gz", repos = NULL, type = "source")

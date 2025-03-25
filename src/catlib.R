@@ -103,8 +103,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     )
 
     # make geometry from hillslope parameters
-    pdf("/out/plots/geometry.pdf")
     out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+
+    pdf("/out/plots/geometry.pdf")
+    plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko, plotpoints=TRUE)
     dev.off()
 
     # save output of make.geometry() for use in other tools
