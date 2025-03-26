@@ -38,6 +38,7 @@ NULL
 #' @param xvar name of the independent (input or model) column in frame
 #' @param yvar name of the dependent (output or result to be modeled) column in frame
 #' @param title title to place on plot
+#' @param hill data frame containing hill data
 #' @param ...  no unnamed argument, added to force named binding of later arguments.
 #' @param smoothmethod (optional) one of 'auto', 'loess', 'gam', 'lm', 'identity', or 'none'.
 #' @param estimate_sig logical if TRUE and smoothmethod is 'identity' or 'lm', report goodness of fit and significance of relation.
@@ -80,7 +81,7 @@ NULL
 #'   contour_color = "#9e9ac8") # lighter purple
 #' @export
 #'
-ScatterHist = function(frame, xvar, yvar, title, ...,
+ScatterHist = function(frame, xvar, yvar, title, hill, ...,
                        smoothmethod="lm", # only works for 'auto', 'loess', 'gam', 'lm', 'none' and 'identity'
                        estimate_sig=FALSE,
                        minimal_labels = TRUE,
@@ -205,8 +206,6 @@ ScatterHist = function(frame, xvar, yvar, title, ...,
       ggplot2::theme(plot.margin = grid::unit(c(1, 0, 0, 0), "lines"))
   }
   
-  
-  
   # estimate size
   yPadFn <- designYLabelPadFunction(plot_center +
                                       ggplot2::scale_y_continuous(limits=ylims, expand = c(0,0)),
@@ -242,7 +241,6 @@ ScatterHist = function(frame, xvar, yvar, title, ...,
   
   # arrange the plots together, with appropriate height and width
   # for each row and column
-  
   gridExtra::grid.arrange(plot_top, empty, plot_center, plot_right,
                           top=grid::textGrob(title),
                           ncol = 2, nrow = 2, widths = c(4,1), heights = c(1, 4))

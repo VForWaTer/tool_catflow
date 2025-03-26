@@ -28,7 +28,7 @@ RUN R -e "install.packages('/src/Catflow_0.998_v2.tar.gz', repos = NULL, type = 
 RUN wget -qO- https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz | tar xz -C src/ 
 
 # Install rgdal package from source
-RUN R -e "install.packages('/src/rgdal', repos = NULL, type = 'source')"
+RUN R -e "install.packages('/src/rgdal', repos = NULL, type = 'source')" #
 
 
 WORKDIR /src
