@@ -12,7 +12,7 @@
 #--------------------------------------------------------------------------------------
 #Load additional packages (used package version 2.2-31)
 library('raster')
-library('rgdal')
+library('rgdal') # this could be changed to sf in case of dependency clashes with rgdal
 
 #--------------------------------------------------------------------------------------
 # Own packages

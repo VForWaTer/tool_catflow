@@ -3,8 +3,12 @@
 # by Ralf Loritz (2014). The function is used to infer a representative hillslope from
 # provided .tif files.
 
-# load Catflow package
+# load packages
 library(Catflow)
+library('ggplot2')
+library('WVPlots')
+
+source('CustomPlottingFunctions.R')
 
 make_geometry_representative_hillslope <- function(params,data_paths) {
     # loader raster package to open .tif files
@@ -64,6 +68,12 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     hill <- hillslope_tool(hillslope_nr, li_spatial, plot_hillslope_width = TRUE, plot_2d_catena = TRUE,
                            no_rf = params$no_flow_area, min_dist = params$min_cells, min_area = 10000, freedom = 10)
 
+    dev.off()
+
+    pdf("/out/plots/energy_distribution.pdf")
+    ScatterHist(Data, "Distance","Elevation",title= "Energy distribution plot",
+            smoothmethod = "none",contour = F, point_color = "#006d2c",hist_color = "#6baed6",
+            density_color = "red",point_alpha=0.05,minimal_labels=T)  + theme_bw()
     dev.off()
 
     #create slope.list for Catflow function make.geometry
