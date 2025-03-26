@@ -9,7 +9,7 @@
         },
         "data":{ 
             "flow_accumulation" : "/in/flow_accumulation.tif",
-            "hillslopes" : "/in/hillslope.tif",
+            "hillslopes" : "/in/hillslopes.tif",
             "elev2river" : "/in/elevation.tif",
             "dist2river" : "/in/distance.tif",
             "filled_dem" : "/in/fill_DEM.tif",

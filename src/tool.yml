@@ -44,7 +44,7 @@ tools:
           extension: .tif
           description: Flow accumulation .tif file.
         hillslopes:
-          example: /in/hillslope.tif
+          example: /in/hillslopes.tif
           extension: .tif
           description: .tif file for hillslopes.
         elev2river:
