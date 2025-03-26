@@ -54,8 +54,8 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   # start calculation
   #--------------------------------------------------------------------------------------
   # reduce precision of dist2river map 
-  round_value <- res(dist2river)[1]
-  dist_hill <- round(dist_hill/round_value)*round_value
+  #round_value <- res(dist2river)[1]
+  #dist_hill <- round(dist_hill/round_value)*round_value
   
   # count all values and there appearance
   ob_mean_catena <- table(dist_hill$dist2river)
