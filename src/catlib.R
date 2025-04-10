@@ -67,8 +67,11 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     # min_dist = minimum number of cells within a hillslope; freedom= freedom of spline function
     pdf("/out/plots/hillslope_plots.pdf")
 
-    hill <- hillslope_tool(hillslope_nr, li_spatial, plot_hillslope_width = TRUE, plot_2d_catena = TRUE,
-                           no_rf = params$no_flow_area, min_dist = params$min_cells, min_area = 10000, freedom = 10)
+    hill <- hillslope_tool(
+        hillslope_nr, li_spatial, plot_hillslope_width = TRUE, plot_2d_catena = TRUE,
+        no_rf = params$no_flow_area, min_dist = params$min_cells,
+        min_area = params$min_area, freedom = params$freedom
+    )
 
     dev.off()
 
@@ -92,8 +95,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         # rectangle, get hillslope width w : A/length = w
         w <- hill$area / hill$short_rep_hill$short_dist[length(hill$short_rep_hill$short_dist)]
 
-        # assign homogenous width to hill object
-        hill$short_rep_hill$short_width_corr <- rep(c(w), length(hill$short_rep_hill$short_dist))    # Width
+        # assign homogenous width to hill object if constant_width parameter is true
+        if (params$constant_width) {
+            hill$short_rep_hill$short_width_corr <- rep(c(w), length(hill$short_rep_hill$short_dist))    # Width
+        }
 
         # Assign values to x based on the value of params$hill_type
         if (params$hill_type == "constant") {

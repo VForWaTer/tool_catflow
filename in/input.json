@@ -5,7 +5,10 @@
             "no_flow_area" : 0.30,
             "min_cells" : 10,
             "hill_type" : "constant",
-            "depth" : 2.1
+            "depth" : 2.1,
+            "min_area": 10000,
+            "freedom": 10,
+            "constant_width": true
         },
         "data":{ 
             "flow_accumulation" : "/in/flow_accumulation.tif",
@@ -36,5 +39,4 @@
             "geometry" : "/in/rep_hill.geo"
         } 
     }       
-
 }

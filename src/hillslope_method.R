@@ -145,7 +145,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     sp_elev <- smooth.spline(rep_hill$mean_dist, rep_hill$mean_elev, df=length(rep_hill$mean_dist)/freedom)
     sm_spline <- smooth.spline(rep_hill$mean_dist, rep_hill$width, df=length(rep_hill$mean_dist)/freedom)
     
-    ###  Checking for short hillslope
+    ###  Checking for short hillslope based on no_rf
     for(id in 1:length(sm_spline$x))
     {
        if(sm_spline$y[id] < quantile(rep_hill$width, no_rf) & rep_hill$mean_dist[id] > quantile(rep_hill$mean_dist, 0.5))
@@ -163,8 +163,8 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     rep_area <- sum(c(diff(short_dist, lag=1), 0)* short_width)
     
     # area correction by multi. factor area/extent_trapeze
-    short_width_area_corr <- short_width * area/rep_area
-    
+      short_width_area_corr <- short_width * area/rep_area
+        
     short_rep_hill <- data.frame('short_dist' = short_dist,
                                  'short_elev' = short_elev,
                                  'short_width' = short_width,
