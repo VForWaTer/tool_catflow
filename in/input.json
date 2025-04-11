@@ -17,7 +17,8 @@
             "dist2river" : "/in/distance.tif",
             "filled_dem" : "/in/fill_DEM.tif",
             "aspect" : "/in/aspect.tif",
-            "river_id" : "/in/streams.tif"
+            "river_id" : "/in/streams.tif",
+            "soil" : "/in/soils.tif"
         } 
     },
     "define_run_printouts": {
