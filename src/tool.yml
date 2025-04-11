@@ -89,6 +89,10 @@ tools:
           example: /in/streams.tif
           extension: .tif
           description: .tif file for river network.
+        soil:
+          example: /in/soils.tif
+          extension: .tif
+          description: .tif file for soil properties.
     define_run_printouts:
       title: Creates the printout times for the Model run 
       description: |
