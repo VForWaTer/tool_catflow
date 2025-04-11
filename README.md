@@ -24,9 +24,12 @@ upcoming versions.
 **Parameters:**
 - `hillslope_id`: Integer ID of the hillsope from hillslope.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1. (default: -1)
 - `no_flow_area`: Percentage of no flow area with almost no slope within the area of interest. (default: 0.30)
-- `min_cells`: Minimum number of cells within a hillslope. (default: 10)
+- `min_cells`: Minimum number of unique rounded distance values to be considered for the hillslope geometry. (default: 10)
 - `hill_type`: Hillslope type. (1) constant thickness (default), (2) cake-shape, (3) variable thickness with spline approximation of lower boundary. Refer CATFLOW manual for more details. (default: constant)
 - `depth`: Thickness of soil profile. (default: 2.1)
+- `constant_width`: If true, use a constant width for the hillslope geometry. If false, use varying width for the hillslope geometry. (default: true)
+- `min_area`: Minimum area (in square meters) required for a hillslope to be considered valid. (default: 10000)
+- `freedom`: Degree of freedom for the spline function used in hillslope geometry calculations. (default: 10)
 
 **Data:**
 - `flow_accumulation`: Flow accumulation .tif file.
