@@ -23,7 +23,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     aspect <- raster(data_paths$aspect)                 # aspect
     river_id <- raster(data_paths$river_id)             # stream link id
     soil <- raster(data_paths$soil)                     # New soil raster file
-
+    soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
     # plot spatial data
     system("mkdir /out/plots")
     system("chmod 777 /out/plots")
@@ -38,6 +38,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     plot(elev_2_river, main = "Elevation to River")
     plot(dist_2_river, main = "Distance to River")
     plot(soil, main = "Soil Properties")  # Plot the new soil data
+    plot(soil_proj, main = "Projected Soil Properties")  # Plot the projected soil data
 
     dev.off()
 
@@ -60,7 +61,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     # create a list of the input maps
     li_spatial <- list("accum" = flow_accum, "hillslopes" = hillslopes, "dem" = dem, "dist2river" = dist_2_river,
                        "elev2river" = elev_2_river, "aspect" = aspect, "hillslope_table" = hillslope_data_frame,
-                       "stream_id" = river_id, "soil" = soil)  # Add soil to the spatial data list
+                       "stream_id" = river_id, "soil" = soil_proj)  # Add soil to the spatial data list
 
     # Select a hillslope from the hillslope raster map (integer value) - halfbasins file
     hillslope_nr <- params$hillslope_id
