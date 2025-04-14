@@ -38,17 +38,19 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     plot(elev_2_river, main = "Elevation to River")
     plot(dist_2_river, main = "Distance to River")
     plot(soil, main = "Soil Properties")  # Plot the new soil data
-    plot(soil_proj, main = "Projected Soil Properties")  # Plot the projected soil data
-
+    plot(soil_proj)
+ 
     dev.off()
 
     # project path CATFLOW/in/
     project.path <- "/out/CATFLOW/in/hillgeo"
     system("mkdir -p /out/CATFLOW/in/")
     system("mkdir -p  /out/CATFLOW/in/hillgeo")
+    system("mkdir -p  /out/CATFLOW/in/soil") 
     system("chmod 777 /out/CATFLOW")
     system("chmod 777 /out/CATFLOW/in")
     system("chmod 777  /out/CATFLOW/in/hillgeo")
+    system("chmod 777  /out/CATFLOW/in/soil")
 
     # transform hillslope to point table
     hillslope_data_frame <- rasterToPoints(hillslopes)
@@ -134,6 +136,46 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko, plotpoints=TRUE)
         dev.off()
 
+        # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
+        if (any(!is.na(hill$short_rep_hill$soil))) {
+
+            # 1. Extract the unique soil types from hill$short_rep_hill
+            unique_soil_types <- unique(hill$short_rep_hill$soil)
+
+            # 2. Initialize the file content with the first line
+            file_content <- paste(length(unique_soil_types), "0", sep = " ")  # Add the first line
+
+            # 3. Loop through each unique soil type
+            for (soil_type in unique_soil_types) {
+                # 4. Find the minimum and maximum 'short_dist' values for the current soil type
+                short_dist_values <- hill$short_rep_hill$short_dist[hill$short_rep_hill$soil == soil_type]
+                short_dist_min <- min(short_dist_values)
+                short_dist_max <- max(short_dist_values)
+
+                # 5. Calculate the overall horizontal extent
+                short_dist_min_overall <- min(hill$short_rep_hill$short_dist)
+                short_dist_max_overall <- max(hill$short_rep_hill$short_dist)
+
+                # 6. Calculate relative xsi coordinates
+                relative_xsi_min <- (short_dist_min - short_dist_min_overall) / (short_dist_max_overall - short_dist_min_overall)
+                relative_xsi_max <- (short_dist_max - short_dist_min_overall) / (short_dist_max_overall - short_dist_min_overall)
+
+                # 7. Append the line to the file content string
+                file_content <- paste0(
+                    file_content, "\n",
+                    "0.0 1.0 ", sprintf("%.1f", relative_xsi_min), " ", sprintf("%.1f", relative_xsi_max), " ", soil_type
+                )
+            }
+
+            # 8. Write the content to a file
+            output_dir <- "/out/CATFLOW/in/soil"
+            output_file <- file.path(output_dir, "soil.dat")
+            write(file_content, file = output_file)
+
+        } else {
+            cat("hill$short_rep_hill$soil contains only NA values. No soil definition file will be created.\n")
+        }
+  
         # save output of make.geometry() for use in other tools
         saveRDS(out.geom, file = "/out/geom.Rds")
 
