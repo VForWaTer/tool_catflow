@@ -129,45 +129,44 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             out.file = "rep_hill.geo"           # outpath
         )
 
-        # make geometry from hillslope parameters
-        out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
-
-        pdf("/out/plots/geometry.pdf")
-        plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko, plotpoints=TRUE)
-        dev.off()
-
         # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
         if (any(!is.na(hill$short_rep_hill$soil))) {
 
-            # 1. Extract the unique soil types from hill$short_rep_hill
+            # Extract the unique soil types from hill$short_rep_hill
             unique_soil_types <- unique(hill$short_rep_hill$soil)
 
-            # 2. Initialize the file content with the first line
-            file_content <- paste(length(unique_soil_types), "0", sep = " ")  # Add the first line
+            # Initialize the file content with the first line
+            file_content <- paste(length(unique_soil_types), "0", sep = " ")
 
-            # 3. Loop through each unique soil type
+            # Initialize a variable to track the starting xsi for the next soil type
+            current_xsi_start <- 0.0
+
+            # Loop through each unique soil type
             for (soil_type in unique_soil_types) {
-                # 4. Find the minimum and maximum 'short_dist' values for the current soil type
+                # Find the minimum and maximum 'short_dist' values for the current soil type
                 short_dist_values <- hill$short_rep_hill$short_dist[hill$short_rep_hill$soil == soil_type]
                 short_dist_min <- min(short_dist_values)
                 short_dist_max <- max(short_dist_values)
 
-                # 5. Calculate the overall horizontal extent
+                # Calculate the overall horizontal extent
                 short_dist_min_overall <- min(hill$short_rep_hill$short_dist)
                 short_dist_max_overall <- max(hill$short_rep_hill$short_dist)
 
-                # 6. Calculate relative xsi coordinates
-                relative_xsi_min <- (short_dist_min - short_dist_min_overall) / (short_dist_max_overall - short_dist_min_overall)
+                # Calculate relative xsi coordinates
+                relative_xsi_min <- current_xsi_start
                 relative_xsi_max <- (short_dist_max - short_dist_min_overall) / (short_dist_max_overall - short_dist_min_overall)
 
-                # 7. Append the line to the file content string
+                # Append the line to the file content string
                 file_content <- paste0(
                     file_content, "\n",
                     "0.0 1.0 ", sprintf("%.1f", relative_xsi_min), " ", sprintf("%.1f", relative_xsi_max), " ", soil_type
                 )
+
+                # Update the starting xsi for the next soil type
+                current_xsi_start <- relative_xsi_max
             }
 
-            # 8. Write the content to a file
+            # Write the content to a file
             output_dir <- "/out/CATFLOW/in/soil"
             output_file <- file.path(output_dir, "soil.dat")
             write(file_content, file = output_file)
@@ -176,6 +175,13 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             cat("hill$short_rep_hill$soil contains only NA values. No soil definition file will be created.\n")
         }
   
+        # make geometry from hillslope parameters
+        out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+
+        pdf("/out/plots/geometry.pdf")
+        plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko, plotpoints=TRUE)
+        dev.off()
+
         # save output of make.geometry() for use in other tools
         saveRDS(out.geom, file = "/out/geom.Rds")
 
@@ -221,7 +227,7 @@ system("chmod 777 /out/CATFLOW/in")
 system("chmod 777  /out/CATFLOW/in/soil")
 
 # Assume that rep_hill.geo is already created 
-geometry = read.geofile(data_paths$geometry) # This may have to be changed in final version!!!
+geometry = read.geofile(data_paths$geometry) #This may have to be changed in final version!!!
 
 # write ksmult and thsmult
     write.facmat(

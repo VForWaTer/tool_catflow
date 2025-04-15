@@ -15,14 +15,14 @@ exit
 
 docker run --rm -it `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" ` 
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
+  -e TOOL_RUN=make_representative_hillslope `
+  catflow bash^
+
+docker run --rm -it `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
   -e TOOL_RUN=make_representative_hillslope `
-  catflow bash
-
-install.packages("https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz", repos = NULL, type = "source")
-
-install.packages("Catflow-R-Package-devel.tar.gz", repos = NULL, type = "source")
-
-
-install.packages("Catflow_0.998_v2.tar.gz", repos = NULL, type = "source")
+  catflow Rscript run.R
