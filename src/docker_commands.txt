@@ -18,7 +18,7 @@ docker run --rm -it `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" ` 
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
   -e TOOL_RUN=make_representative_hillslope `
-  catflow bash^
+catflow bash
 
 docker run --rm -it `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
@@ -26,3 +26,11 @@ docker run --rm -it `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
   -e TOOL_RUN=make_representative_hillslope `
   catflow Rscript run.R
+
+
+docker run --rm -it `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" `
+  -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
+  -e TOOL_RUN=make_representative_hillslope `
+  catflow bash

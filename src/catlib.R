@@ -24,6 +24,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     river_id <- raster(data_paths$river_id)             # stream link id
     soil <- raster(data_paths$soil)                     # New soil raster file
     soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
+
     # plot spatial data
     system("mkdir /out/plots")
     system("chmod 777 /out/plots")
@@ -129,6 +130,13 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             out.file = "rep_hill.geo"           # outpath
         )
 
+        # make geometry from hillslope parameters
+        out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+
+        pdf("/out/plots/geometry.pdf")
+        plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko,boundcol = 1)
+        dev.off()
+
         # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
         if (any(!is.na(hill$short_rep_hill$soil))) {
 
@@ -175,15 +183,49 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             cat("hill$short_rep_hill$soil contains only NA values. No soil definition file will be created.\n")
         }
   
-        # make geometry from hillslope parameters
-        out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+        # Parse file_content and convert it into a matrix
+        if (exists("file_content")) {
+            # Split the file_content into lines
+            lines <- strsplit(file_content, "\n")[[1]]
+            
+            # Skip the first line (header) and process the remaining lines
+            soil_data <- do.call(rbind, lapply(lines[-1], function(line) {
+                values <- strsplit(line, " ")[[1]]
+                as.numeric(values)
+            }))
+            
+            # Align the soil matrix with the dimensions of out.geom$sko
+            sko_dims <- dim(out.geom$sko)  # Get dimensions of sko
+            soil_matrix <- matrix(NA, nrow = sko_dims[1], ncol = sko_dims[2])  # Initialize matrix
+            
+            # Fill the matrix with soil type values
+            for (i in 1:nrow(soil_data)) {
+                # Map vertical and horizontal grid indices
+                row_start <- round(soil_data[i, 1] * (sko_dims[1] - 1)) + 1
+                row_end <- round(soil_data[i, 2] * (sko_dims[1] - 1)) + 1
+                col_start <- round(soil_data[i, 3] * (sko_dims[2] - 1)) + 1
+                col_end <- round(soil_data[i, 4] * (sko_dims[2] - 1)) + 1
 
-        pdf("/out/plots/geometry.pdf")
-        plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko, plotpoints=TRUE)
-        dev.off()
+                # Ensure indices are within bounds of the domain
+                row_start <- max(1, min(row_start, sko_dims[1]))
+                row_end <- max(1, min(row_end, sko_dims[1]))
+                col_start <- max(1, min(col_start, sko_dims[2]))
+                col_end <- max(1, min(col_end, sko_dims[2]))
+
+                # Assign the soil type to all rows and columns in the range
+                soil_matrix[row_start:row_end, col_start:col_end] <- soil_data[i, 5]
+            }
+            
+            # Fill NA values in the matrix with a default soil type (e.g., 0 for no data)
+            soil_matrix[is.na(soil_matrix)] <- 0
+        }
 
         # save output of make.geometry() for use in other tools
         saveRDS(out.geom, file = "/out/geom.Rds")
+        
+        pdf("/out/plots/soil_types.pdf")
+        plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix,)
+        dev.off()
 
         # return to use in workflows
         return(out.geom)
