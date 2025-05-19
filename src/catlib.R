@@ -245,6 +245,13 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             fac = fact_mult
         )
 
+        # write surface nodes file
+        system("mkdir -p  /out/CATFLOW/in/landuse")
+        system("chmod 777  /out/CATFLOW/in/landuse")
+        write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
+                  xs = out.geom$xsi, lu = 1, precid = params$hillslope_id, climid = 1, 
+                  windid = rep(1, 4), headr)
+
         # return to use in workflows
         return(out.geom)
 
