@@ -224,11 +224,30 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         saveRDS(out.geom, file = "/out/geom.Rds")
         
         pdf("/out/plots/soil_types.pdf")
-        plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix,)
+        plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix)
         dev.off()
+
+        # write mulipliers file
+        system("mkdir -p /out/CATFLOW/in/")
+        system("mkdir -p  /out/CATFLOW/in/soil")
+        system("chmod 777 /out/CATFLOW")
+        system("chmod 777 /out/CATFLOW/in")
+        system("chmod 777  /out/CATFLOW/in/soil")
+
+        #defaults to 1 change manually if detailed soil data is available   
+        fact_mult <- 1
+        write.facmat(
+        output.file = "/out/CATFLOW/in/soil/ksmult0.dat", et=out.geom$eta, xs=out.geom$xsi,
+        fac = fact_mult
+        )
+        write.facmat(
+            output.file = "/out/CATFLOW/in/soil/thsmult0.dat", et=out.geom$eta, xs=out.geom$xsi,
+            fac = fact_mult
+        )
 
         # return to use in workflows
         return(out.geom)
+
     } else {
         stop("Hillslope tool did not return a valid hill object.")
     }
@@ -256,29 +275,6 @@ system("chmod 777  /out/CATFLOW/in/control")
         intervall = params$interval,
         time.unit = typ,
         flag = params$flag
-    )
-
-}
-
-write_multipliers <- function(params,data_paths) {
-# Output folder
-system("mkdir -p /out/CATFLOW/in/")
-system("mkdir -p  /out/CATFLOW/in/soil")
-system("chmod 777 /out/CATFLOW")
-system("chmod 777 /out/CATFLOW/in")
-system("chmod 777  /out/CATFLOW/in/soil")
-
-# Assume that rep_hill.geo is already created 
-geometry = read.geofile(data_paths$geometry) #This may have to be changed in final version!!!
-
-# write ksmult and thsmult
-    write.facmat(
-        output.file = "/out/CATFLOW/in/soil/ksmult0.dat", et=geometry$eta, xs=geometry$xsi,
-        fac = params$fac_kst
-    )
-    write.facmat(
-        output.file = "/out/CATFLOW/in/soil/thsmult0.dat", et=geometry$eta, xs=geometry$xsi,
-        fac = params$fac_ths
     )
 
 }

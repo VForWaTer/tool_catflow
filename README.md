@@ -57,20 +57,5 @@ This file defines how frequently outputs are saved and dispalyed during the run.
   - `seconds`
 - `flag`: Flag controlling the amount of output at printout times, eventually a vector (1: dump all; 0: dump for surface nodes) (default: 1)
 
-### write_multipliers
-
-**Title:** Creates the multiplier files.
-
-**Description:**
-Writes the files ksmulto and thsmult.
-Usually the factor is 1. but can be optionally used to have other scaling factors for saturated hydrualic conductivity and soil theta.
-
-**Parameters:**
-- `fac_kst`: Scaling factor for saturated hydrualic conductivity (default: 1)
-- `fac_ths`: Scaling factor for soil theta (default: 1)
-
-**Data:**
-- `geometry`: .geo file for the hillslope geometry
-
 
 
