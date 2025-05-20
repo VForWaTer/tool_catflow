@@ -91,6 +91,15 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
           minimal_labels = TRUE
         ) + theme_bw()
         dev.off()
+        # Also save as JPEG
+        jpeg("/out/plots/energy_distribution.jpg")
+        ScatterHist(
+          Data, "Distance", "Elevation", title = "Energy distribution plot", hill = hill,
+          smoothmethod = "none", contour = FALSE, point_color = "#006d2c",
+          hist_color = "#6baed6", density_color = "red", point_alpha = 0.05,
+          minimal_labels = TRUE
+        ) + theme_bw()
+        dev.off()
 
         #create slope.list for Catflow function make.geometry
         # turn around hillslope catena left to right
@@ -250,7 +259,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         system("chmod 777  /out/CATFLOW/in/landuse")
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
                   xs = out.geom$xsi, lu = 1, precid = params$hillslope_id, climid = 1, 
-                  windid = rep(1, 4), headr)
+                  windid = rep(1, 4))
 
         # return to use in workflows
         return(out.geom)
