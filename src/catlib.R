@@ -92,7 +92,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         ) + theme_bw()
         dev.off()
         # Also save as JPEG
-        jpeg("/out/plots/energy_distribution.jpg")
+        jpeg("/out/plots/energy_distribution.jpg",dpi=1200, quality =100)
         ScatterHist(
           Data, "Distance", "Elevation", title = "Energy distribution plot", hill = hill,
           smoothmethod = "none", contour = FALSE, point_color = "#006d2c",
