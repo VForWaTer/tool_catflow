@@ -8,6 +8,7 @@ library(Catflow)
 library('ggplot2')
 library('WVPlots')
 library("raster")
+library('sf')
 
 source('CustomPlottingFunctions.R')
 source("hillslope_method.R")
@@ -25,6 +26,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     soil <- raster(data_paths$soil)                     # New soil raster file
     soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
 
+    # Read Geopackage
+    hillslope_gpkg <- st_read(data_paths$hillslopes_vect)
+    hill_gpkg_df = as.data.frame(hillslope_gpkg)
+    
     # plot spatial data
     system("mkdir /out/plots")
     system("chmod 777 /out/plots")
@@ -266,8 +271,11 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         # write surface nodes file
         system("mkdir -p  /out/CATFLOW/in/landuse")
         system("chmod 777  /out/CATFLOW/in/landuse")
+        
+        # Find hillslope_new_id from hill_gpkg_df where hillslope_id matches params$hillslope_id
+        precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
-                  xs = out.geom$xsi, lu = 1, precid = params$hillslope_id, climid = 1, 
+                  xs = out.geom$xsi, lu = 1, precid = precid_val, climid = 1, 
                   windid = rep(1, 4))
 
         # return to use in workflows
