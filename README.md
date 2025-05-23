@@ -34,6 +34,7 @@ upcoming versions.
 **Data:**
 - `flow_accumulation`: Flow accumulation .tif file.
 - `hillslopes`: .tif file for hillslopes.
+- `hillslopes_vect`: Vector file (GeoPackage) for hillslopes (`.gpkg`).
 - `elev2river`: .tif file for elevation to river.
 - `dist2river`: .tif file for the distance to river.
 - `filled_dem`: Filled Digital elevation model (DEM).

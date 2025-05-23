@@ -13,6 +13,7 @@
         "data":{ 
             "flow_accumulation" : "/in/flow_accumulation.tif",
             "hillslopes" : "/in/hillslopes.tif",
+            "hillslopes_vect": "/in/hillslopes.gpkg",
             "elev2river" : "/in/elevation.tif",
             "dist2river" : "/in/distance.tif",
             "filled_dem" : "/in/fill_DEM.tif",

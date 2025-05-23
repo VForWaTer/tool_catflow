@@ -69,6 +69,10 @@ tools:
           example: /in/hillslopes.tif
           extension: .tif
           description: .tif file for hillslopes.
+        hillslopes_vect:
+          example: /in/hillslopes.gpkg
+          extension: .gpkg
+          description: Vector file (GeoPackage) for hillslopes.
         elev2river:
           example: /in/elevation.tif
           extension: .tif
@@ -120,7 +124,7 @@ tools:
             description: |
               Flag controlling the amount of output at printout times, eventually a 
               vector (1: dump all; 0: dump for surface nodes)
-            default: 1    
+            default: 1
 
 
 
