@@ -153,8 +153,13 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             out.file = "rep_hill.geo"           # outpath
         )
 
+        if (params$hillslope_id != -1) {
+            precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
+        } else {
+            precid_val <- 1
+        }
         # make geometry from hillslope parameters
-        out.geom <- make.geometry(topo, make.output = TRUE, project.path = project.path)
+        out.geom <- make.geometry(topo,numh =precid_val, make.output = TRUE, project.path = project.path)
 
         pdf("/out/plots/geometry.pdf")
         plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko,boundcol = 1)
