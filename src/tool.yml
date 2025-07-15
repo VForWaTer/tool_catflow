@@ -18,11 +18,18 @@ tools:
           default: -1
         no_flow_area:
           type: float
-          description: Percentage of no flow area  with almost no slope within the area of interest.
+          description: |
+           Percentage of no flow area  with almost no slope within the area of interest. 
+           The idea is to identify a part of the upper hillslope that has consistently very low estimated width (below the no_rf quantile) 
+           and might be considered a "no flow" or contributing only minimally to runoff. By shortening the profile, the tool might focus on the more 
+           hydrologically active lower part of the hillslope.
           default: 0.30  
         min_cells:
           type: integer
-          description: Minimum number of cells within a hillslope
+          description: |
+           Minimum number of unique number of unique rounded distance values to be considered for the hillslope geometry.
+           This parameter helps to filter out very short or simple hillslopes that might not be well-represented by the 2D catena approach,
+            potentially due to insufficient variation in distance and elevation.
           default: 10
         hill_type:
           type: enum
@@ -38,6 +45,21 @@ tools:
           type: float
           description: thickness of soil profile
           default: 2.1
+        constant_width:
+          type: boolean
+          description: |
+            If true, use a constant width for the hillslope geometry. If false, use varying width for the hillslope geometry.
+          default: true
+        min_area:
+          type: integer
+          description: |
+            Minimum area (in square meters) required for a hillslope to be considered valid.
+          default: 10000
+        freedom:
+          type: integer
+          description: |
+            Degree of freedom for the spline function used in hillslope geometry calculations.
+          default: 10
       data:
         flow_accumulation:
           example: /in/flow_accumulation.tif
@@ -47,6 +69,10 @@ tools:
           example: /in/hillslopes.tif
           extension: .tif
           description: .tif file for hillslopes.
+        hillslopes_vect:
+          example: /in/hillslopes.gpkg
+          extension: .gpkg
+          description: Vector file (GeoPackage) for hillslopes.
         elev2river:
           example: /in/elevation.tif
           extension: .tif
@@ -67,6 +93,10 @@ tools:
           example: /in/streams.tif
           extension: .tif
           description: .tif file for river network.
+        soil:
+          example: /in/soils.tif
+          extension: .tif
+          description: .tif file for soil properties.
     define_run_printouts:
       title: Creates the printout times for the Model run 
       description: |
@@ -94,26 +124,7 @@ tools:
             description: |
               Flag controlling the amount of output at printout times, eventually a 
               vector (1: dump all; 0: dump for surface nodes)
-            default: 1    
-    write_multipliers:
-      title: Creates the multiplier files.
-      description: |
-        Writes the files ksmulto and thsmult.
-        Usually the factor is 1. but can be optionally used to have other scaling factors  for saturated hydrualic conductivity and soil theta.
-      parameters: 
-        fac_kst:
-          type: float
-          description: Scaling factor for saturated hydrualic conductivity
-          default: 1
-        fac_ths:
-          type: float
-          description: Scaling factor for soil theta
-          default: 1  
-      data: 
-        geometry:
-          example: /in/rep_hill.geo
-          extension: .geo
-          description: .geo file for the hillslope geometry
+            default: 1
 
 
 

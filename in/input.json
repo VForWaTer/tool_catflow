@@ -1,20 +1,25 @@
 {
     "make_representative_hillslope": {
         "parameters":{ 
-            "hillslope_id" : -1,
+            "hillslope_id" : 224,
             "no_flow_area" : 0.30,
             "min_cells" : 10,
             "hill_type" : "constant",
-            "depth" : 2.1
+            "depth" : 2.1,
+            "min_area": 10000,
+            "freedom": 10,
+            "constant_width": false
         },
         "data":{ 
             "flow_accumulation" : "/in/flow_accumulation.tif",
             "hillslopes" : "/in/hillslopes.tif",
+            "hillslopes_vect": "/in/hillslopes.gpkg",
             "elev2river" : "/in/elevation.tif",
             "dist2river" : "/in/distance.tif",
             "filled_dem" : "/in/fill_DEM.tif",
             "aspect" : "/in/aspect.tif",
-            "river_id" : "/in/streams.tif"
+            "river_id" : "/in/streams.tif",
+            "soil" : "/in/soils.tif"
         } 
     },
     "define_run_printouts": {
@@ -27,14 +32,5 @@
         },
         "data":{ 
         } 
-    },
-    "write_multipliers": {
-        "parameters":{ 
-            "fac_kst":1
-        },
-        "data":{ 
-            "geometry" : "/in/rep_hill.geo"
-        } 
-    }       
-
+    }
 }

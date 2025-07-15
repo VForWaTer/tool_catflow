@@ -35,8 +35,11 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   # safty check if hillslope_nr is set to zero
   if(hillslope_nr == 0) stop("---Do not use hillslope_nr = 0---")
   
-  if(hillslope_nr == -1) hill <- hillslope_as_pts # hillslope_nr = -1 means that the entire hillslope is used
-  else hill <- hillslope_as_pts[hillslope_as_pts[,3]==hillslope_nr,]
+  if (hillslope_nr == -1) {
+    hill <- hillslope_as_pts  # Use all hillslopes when hillslope_nr == -1
+  } else {
+    hill <- hillslope_as_pts[hillslope_as_pts[, 3] == hillslope_nr, ]
+  }
   
   #extract number of cells and area of hillslope
   number_of_cells <- length(hill[,1])
@@ -84,20 +87,46 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     
   }else{rep_hill$geo<-rep(NA, length(rep_hill$mean_elev))}
   
-  ###
-  # if soil data is available extract informations
-  soil <- li_spatial$soil
-  if(exists('soil') & !is.null(soil))
-  {
-    soil_hill <- data.frame(soil=extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-    rep_hill$soil <- as.numeric(sapply(names(ob_mean_catena),
-                                      function(i){weighted_flow_accum <- as.integer((flow_hill$accum[dist_hill$dist2river == i] / sum(flow_hill$accum[dist_hill$dist2river == i]))* sum(flow_hill$accum[dist_hill$dist2river == i]))
-                                                  names(which.max(table(rep(soil_hill$soil[dist_hill$dist2river == i], weighted_flow_accum))))
+
+# if soil data is available extract informations
+soil <- li_spatial$soil
+if(exists('soil') & !is.null(soil))
+{
+  soil_hill <- data.frame(soil=extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  rep_hill$soil <- as.numeric(sapply(names(ob_mean_catena),
+                                      function(i){
+                                        soil_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i)) # Use the original dist2river here
+
+                                        if(length(soil_at_dist_indices) > 0) {
+                                          soil_values <- soil_hill$soil[soil_at_dist_indices]
+                                          accum_values <- flow_hill$accum[soil_at_dist_indices]
+
+                                          valid_indices <- which(!is.na(soil_values) & !is.na(accum_values) & is.numeric(accum_values) & accum_values >= 0)
+
+                                          if(length(valid_indices) > 0) {
+                                            weighted_flow_accum_sum <- sum(accum_values[valid_indices], na.rm = TRUE)
+                                            if(weighted_flow_accum_sum > 0) {
+                                              weighted_flow_accum <- as.integer((accum_values[valid_indices] / weighted_flow_accum_sum) * weighted_flow_accum_sum)
+                                              dom_soil_table <- table(rep(soil_values[valid_indices], weighted_flow_accum))
+                                              if(length(dom_soil_table) > 0) {
+                                                dominant_soil <- as.numeric(names(which.max(dom_soil_table)))
+                                                return(dominant_soil)
+                                              } else {
+                                                return(NA) # No valid soil after weighting
+                                              }
+                                            } else {
+                                              return(NA) # Sum of weighted accum is zero
+                                            }
+                                          } else {
+                                            return(NA) # No valid soil or accumulation at this distance
+                                          }
+                                        } else {
+                                          return(NA) # No cells at this distance
+                                        }
                                       }
-    ))
-    
-  }else{rep_hill$soil <-rep(NA, length(rep_hill$mean_elev))}
-  
+  ))
+
+}else{rep_hill$soil <-rep(NA, length(rep_hill$mean_elev))}
   ###
   # if landuse is available extract informations
   landuse <- li_spatial$landuse
@@ -145,7 +174,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     sp_elev <- smooth.spline(rep_hill$mean_dist, rep_hill$mean_elev, df=length(rep_hill$mean_dist)/freedom)
     sm_spline <- smooth.spline(rep_hill$mean_dist, rep_hill$width, df=length(rep_hill$mean_dist)/freedom)
     
-    ###  Checking for short hillslope
+    ###  Checking for short hillslope based on no_rf
     for(id in 1:length(sm_spline$x))
     {
        if(sm_spline$y[id] < quantile(rep_hill$width, no_rf) & rep_hill$mean_dist[id] > quantile(rep_hill$mean_dist, 0.5))
@@ -163,8 +192,8 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     rep_area <- sum(c(diff(short_dist, lag=1), 0)* short_width)
     
     # area correction by multi. factor area/extent_trapeze
-    short_width_area_corr <- short_width * area/rep_area
-    
+      short_width_area_corr <- short_width * area/rep_area
+        
     short_rep_hill <- data.frame('short_dist' = short_dist,
                                  'short_elev' = short_elev,
                                  'short_width' = short_width,
