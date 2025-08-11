@@ -26,9 +26,12 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     soil <- raster(data_paths$soil)                     # New soil raster file
     soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
 
-    # Read Geopackage
-    hillslope_gpkg <- st_read(data_paths$hillslopes_vect)
-    hill_gpkg_df = as.data.frame(hillslope_gpkg)
+    # Read Geopackage if available
+ #   hill_gpkg_df <- NULL
+  #  if (!is.null(data_paths$hillslopes_vect) && file.exists(data_paths$hillslopes_vect)) {
+  #      hillslope_gpkg <- st_read(data_paths$hillslopes_vect, quiet = TRUE)
+  #      hill_gpkg_df <- as.data.frame(hillslope_gpkg)
+   # }
     
     # plot spatial data
     system("mkdir /out/plots")
@@ -153,12 +156,14 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             out.file = "rep_hill.geo"           # outpath
         )
 
-        if (params$hillslope_id != -1) {
-            precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
-        } else {
-            precid_val <- 1
-        }
+      #  if (!is.null(hill_gpkg_df) && params$hillslope_id != -1) {
+       #     precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
+      #      if (is.na(precid_val)) precid_val <- 1
+       # } else {
+      #      precid_val <- 1
+       # }
         # make geometry from hillslope parameters
+        precid_val <- 1
         out.geom <- make.geometry(topo,numh =precid_val, make.output = TRUE, project.path = project.path)
 
         pdf("/out/plots/geometry.pdf")
@@ -277,8 +282,6 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         system("mkdir -p  /out/CATFLOW/in/landuse")
         system("chmod 777  /out/CATFLOW/in/landuse")
         
-        # Find hillslope_new_id from hill_gpkg_df where hillslope_id matches params$hillslope_id
-        precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
                   xs = out.geom$xsi, lu = 1, precid = precid_val, climid = 1, 
                   windid = rep(1, 4))
@@ -289,30 +292,4 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     } else {
         stop("Hillslope tool did not return a valid hill object.")
     }
-}
-
-define_run_printouts <- function(params,data_paths) {
-# Output folder
-system("mkdir -p /out/CATFLOW/in/")
-system("mkdir -p  /out/CATFLOW/in/control")
-system("chmod 777 /out/CATFLOW")
-system("chmod 777 /out/CATFLOW/in")
-system("chmod 777  /out/CATFLOW/in/control")
-
-# Assign values to x based on the value of params$hill_type
-    if (params$time.unit == "hourly") {
-    typ <- 'h'
-    } else if (params$hill_type == "seconds") {
-    typ <- 's'
-    } 
-# write printout times
-    write.printout(
-        output.file = "/out/CATFLOW/in/control/printout.prt",
-        start.time = params$start.time,
-        end.time = params$end.time,
-        intervall = params$interval,
-        time.unit = typ,
-        flag = params$flag
-    )
-
 }

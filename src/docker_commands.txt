@@ -7,6 +7,7 @@ docker run --rm -it `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/in:/in" `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/src:/src" `
   -v "E:/bwsync&share/03_Software/Github/tool_catflow/out:/out" `
+    catflow bash
   -e TOOL_RUN=make_representative_hillslope `
   catflow bash
 export TOOL_RUN=make_representative_hillslope

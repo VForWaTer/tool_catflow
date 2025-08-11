@@ -22,7 +22,7 @@ In this present version, we assume a fixed horizontal and varying vertical grid 
 upcoming versions.
 
 **Parameters:**
-- `hillslope_id`: Integer ID of the hillsope from hillslope.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1. (default: -1)
+- `hillslope_id`: Integer ID of the hillsope from hillslope.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1. 
 - `no_flow_area`: Percentage of no flow area with almost no slope within the area of interest. (default: 0.30)
 - `min_cells`: Minimum number of unique rounded distance values to be considered for the hillslope geometry. (default: 10)
 - `hill_type`: Hillslope type. (1) constant thickness (default), (2) cake-shape, (3) variable thickness with spline approximation of lower boundary. Refer CATFLOW manual for more details. (default: constant)
@@ -34,29 +34,10 @@ upcoming versions.
 **Data:**
 - `flow_accumulation`: Flow accumulation .tif file.
 - `hillslopes`: .tif file for hillslopes.
-- `hillslopes_vect`: Vector file (GeoPackage) for hillslopes (`.gpkg`).
 - `elev2river`: .tif file for elevation to river.
 - `dist2river`: .tif file for the distance to river.
 - `filled_dem`: Filled Digital elevation model (DEM).
 - `aspect`: .tif file for aspect.
 - `river_id`: .tif file for river network.
-
-### define_run_printouts
-
-**Title:** Creates the printout times for the Model run
-
-**Description:**
-Writes a file with printout times for a CATFLOW simulation.
-This file defines how frequently outputs are saved and dispalyed during the run.
-
-**Parameters:**
-- `start.time`: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
-- `end.time`: End date for the simulation ("%d.%m.%Y %H:%M:%S")
-- `interval`: Time interval between printout times
-- `time.unit`: Time units of printout times (Currently only tested for hours and seonds)
-  - `hourly`
-  - `seconds`
-- `flag`: Flag controlling the amount of output at printout times, eventually a vector (1: dump all; 0: dump for surface nodes) (default: 1)
-
-
+- `soil`: .tif file for soil properties (Optional).
 
