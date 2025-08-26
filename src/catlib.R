@@ -16,15 +16,21 @@ source("hillslope_method.R")
 make_geometry_representative_hillslope <- function(params,data_paths) {
   
     #import spatial data
-    flow_accum <- raster(data_paths$flow_accumulation)  # flowaccumulation Attention should be in log scale (Edit: Not working with log - Ashish)
-    hillslopes <- raster(data_paths$hillslopes)              # !!! entire basin as one hillslope 
-    elev_2_river <- raster(data_paths$elev2river)  # elevation to !!!elev2riv_mod !!! (because of failed calculation areas, gasp are filled with values of SAGA calculation)
-    dist_2_river <- raster(data_paths$dist2river)   # distance to river
-    dem <- raster(data_paths$filled_dem)                       # digital elevation modell
-    aspect <- raster(data_paths$aspect)                 # aspect
-    river_id <- raster(data_paths$river_id)             # stream link id
-    soil <- raster(data_paths$soil)                     # New soil raster file
-    soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
+    flow_accum <- raster(data_paths$flow_accumulation)
+    hillslopes <- raster(data_paths$hillslopes)
+    elev_2_river <- raster(data_paths$elev2river)
+    dist_2_river <- raster(data_paths$dist2river)
+    dem <- raster(data_paths$filled_dem)
+    aspect <- raster(data_paths$aspect)
+    river_id <- raster(data_paths$river_id)
+    # Handle optional soil raster
+    if (!is.null(data_paths$soil) && file.exists(data_paths$soil)) {
+        soil <- raster(data_paths$soil)
+        soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb")
+    } else {
+        soil <- NULL
+        soil_proj <- NULL
+    }
 
     # Read Geopackage if available
  #   hill_gpkg_df <- NULL
@@ -70,9 +76,17 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     flow_accum <-  floor(flow_accum)
 
     # create a list of the input maps
-    li_spatial <- list("accum" = flow_accum, "hillslopes" = hillslopes, "dem" = dem, "dist2river" = dist_2_river,
-                       "elev2river" = elev_2_river, "aspect" = aspect, "hillslope_table" = hillslope_data_frame,
-                       "stream_id" = river_id, "soil" = soil_proj)  # Add soil to the spatial data list
+    li_spatial <- list(
+        "accum" = flow_accum,
+        "hillslopes" = hillslopes,
+        "dem" = dem,
+        "dist2river" = dist_2_river,
+        "elev2river" = elev_2_river,
+        "aspect" = aspect,
+        "hillslope_table" = hillslope_data_frame,
+        "stream_id" = river_id,
+        "soil" = soil_proj # will be NULL if not available
+    )
 
     # Select a hillslope from the hillslope raster map (integer value) - halfbasins file
     hillslope_nr <- params$hillslope_id
@@ -170,8 +184,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko,boundcol = 1)
         dev.off()
 
-        # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
-        if (any(!is.na(hill$short_rep_hill$soil))) {
+        # Only execute if soil file exists
+        if (!is.null(data_paths$soil) && file.exists(data_paths$soil)) {
+            # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
+            if (any(!is.na(hill$short_rep_hill$soil))) {
 
             # Extract the unique soil types from hill$short_rep_hill
             unique_soil_types <- unique(hill$short_rep_hill$soil)
@@ -199,8 +215,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
                 # Append the line to the file content string
                 file_content <- paste0(
-                    file_content, "\n",
-                    "0.0 1.0 ", sprintf("%.1f", relative_xsi_min), " ", sprintf("%.1f", relative_xsi_max), " ", soil_type
+                file_content, "\n",
+                "0.0 1.0 ", sprintf("%.1f", relative_xsi_min), " ", sprintf("%.1f", relative_xsi_max), " ", soil_type
                 )
 
                 # Update the starting xsi for the next soil type
@@ -212,12 +228,12 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             output_file <- file.path(output_dir, "soil.dat")
             write(file_content, file = output_file)
 
-        } else {
+            } else {
             cat("hill$short_rep_hill$soil contains only NA values. No soil definition file will be created.\n")
-        }
-  
-        # Parse file_content and convert it into a matrix
-        if (exists("file_content")) {
+            }
+          
+            # Parse file_content and convert it into a matrix
+            if (exists("file_content")) {
             # Split the file_content into lines
             lines <- strsplit(file_content, "\n")[[1]]
             
@@ -251,14 +267,15 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             
             # Fill NA values in the matrix with a default soil type (e.g., 0 for no data)
             soil_matrix[is.na(soil_matrix)] <- 0
-        }
+            }
 
-        # save output of make.geometry() for use in other tools
-        saveRDS(out.geom, file = "/out/geom.Rds")
-        
-        pdf("/out/plots/soil_types.pdf")
-        plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix)
-        dev.off()
+            # save output of make.geometry() for use in other tools
+            saveRDS(out.geom, file = "/out/geom.Rds")
+            
+            pdf("/out/plots/soil_types.pdf")
+            plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix)
+            dev.off()
+        }
 
         # write mulipliers file
         system("mkdir -p /out/CATFLOW/in/")
