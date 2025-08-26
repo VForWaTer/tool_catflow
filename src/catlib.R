@@ -67,7 +67,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     plot(dem, col = gray.colors(100, start = 0.9, end = 0.1),
         main = "DEM with River Network",legend=TRUE)
     plot(river_id, col = "blue", add = TRUE, lwd = 2,legend=FALSE)
-    
+
     # Soil (categorical)
     if (!is.null(soil)) {
         plot(soil, col = brewer.pal(8, "Dark2"), main = "Soil Properties")
@@ -295,6 +295,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             dev.off()
         }
 
+        # save output of make.geometry() for use in other tools
+        saveRDS(out.geom, file = "/out/geom.Rds")
         # write mulipliers file
         system("mkdir -p /out/CATFLOW/in/")
         system("mkdir -p  /out/CATFLOW/in/soil")
