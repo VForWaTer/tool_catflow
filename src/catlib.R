@@ -52,8 +52,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     plot(dem, main = "DEM")
     plot(elev_2_river, main = "Elevation to River")
     plot(dist_2_river, main = "Distance to River")
-    plot(soil, main = "Soil Properties")  # Plot the new soil data
-    plot(soil_proj)
+    if (!is.null(soil)) {
+        plot(soil, main = "Soil Properties")  # Plot the new soil data
+        plot(soil_proj)
+    }
  
     dev.off()
 
