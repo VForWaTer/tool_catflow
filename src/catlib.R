@@ -9,6 +9,9 @@ library('ggplot2')
 library('WVPlots')
 library("raster")
 library('sf')
+library(randomcoloR)
+library(RColorBrewer)
+library(viridis)
 
 source('CustomPlottingFunctions.R')
 source("hillslope_method.R")
@@ -45,16 +48,29 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
     pdf("/out/plots/spatial_data.pdf")
 
-    plot(hillslopes, main = "Basin")
-    plot(river_id, main = "River Network")
-    plot(aspect, main = "Aspect")
-    plot(flow_accum, main = "Flow Accumulation")
-    plot(dem, main = "DEM")
-    plot(elev_2_river, main = "Elevation to River")
-    plot(dist_2_river, main = "Distance to River")
+    n_ids <- length(unique(values(hillslopes)))
+    cols <- distinctColorPalette(n_ids)  # generates well-separated colors
+    plot(hillslopes, col = cols, main = "Basin")
+    plot(river_id,
+        col = c(NA, "blue"),   # NA = no color, 1 = blue
+        breaks = c(0, 0.5, 1.5),
+        legend = FALSE,
+        main = "River Network")
+
+    # Continuous
+    plot(aspect, col = viridis(100, option = "plasma"), main = "Aspect")
+    plot(flow_accum, col = viridis(100, option = "magma"), main = "Flow Accumulation")
+    plot(dem, col = viridis(100, option = "viridis"), main = "DEM")
+    plot(elev_2_river, col = viridis(100, option = "cividis"), main = "Elevation to River")
+    plot(dist_2_river, col = viridis(100, option = "inferno"), main = "Distance to River")
+
+    plot(dem, col = gray.colors(100, start = 0.9, end = 0.1),
+        main = "DEM with River Network",legend=TRUE)
+    plot(river_id, col = "blue", add = TRUE, lwd = 2,legend=FALSE)
+    
+    # Soil (categorical)
     if (!is.null(soil)) {
-        plot(soil, main = "Soil Properties")  # Plot the new soil data
-        plot(soil_proj)
+        plot(soil, col = brewer.pal(8, "Dark2"), main = "Soil Properties")
     }
  
     dev.off()
