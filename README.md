@@ -1,4 +1,5 @@
 # CATFLOW preprocessing tool
+This is an internal branch only for development purposes for Manoj J et al (2026)
 
 Pre- and postprocessing workflows for CATFLOW using functions from the [Catflow-R-Package](https://github.com/CATFLOW/Catflow-R-Package).
 
