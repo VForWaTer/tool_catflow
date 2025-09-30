@@ -25,6 +25,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     river_id <- raster(data_paths$river_id)             # stream link id
     soil <- raster(data_paths$soil)                     # New soil raster file
     soil_proj <- projectRaster(soil, crs = crs(elev_2_river), method = "ngb") # Use "ngb" for categorical data
+    landuse <- raster(data_paths$landuse)                 # landuse
 
     # Read Geopackage
     hillslope_gpkg <- st_read(data_paths$hillslopes_vect)
@@ -44,7 +45,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     plot(elev_2_river, main = "Elevation to River")
     plot(dist_2_river, main = "Distance to River")
     plot(soil, main = "Soil Properties")  # Plot the new soil data
-    plot(soil_proj)
+    plot(landuse, main = "Land Use")  # Plot the land use data
  
     dev.off()
 
@@ -69,7 +70,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     # create a list of the input maps
     li_spatial <- list("accum" = flow_accum, "hillslopes" = hillslopes, "dem" = dem, "dist2river" = dist_2_river,
                        "elev2river" = elev_2_river, "aspect" = aspect, "hillslope_table" = hillslope_data_frame,
-                       "stream_id" = river_id, "soil" = soil_proj)  # Add soil to the spatial data list
+                       "stream_id" = river_id, "soil" = soil_proj, "landuse" = landuse)  # Add soil and landuse to the spatial data list
 
     # Select a hillslope from the hillslope raster map (integer value) - halfbasins file
     hillslope_nr <- params$hillslope_id
@@ -153,6 +154,7 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
             out.file = "rep_hill.geo"           # outpath
         )
 
+        # This is a workaround to ensure that hillslope id is assigned sequentially as CATFLOW doesnt explictily allow the definition of a hillslope id 
         if (params$hillslope_id != -1) {
             precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
         } else {
@@ -165,103 +167,90 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko,boundcol = 1)
         dev.off()
 
-        # 0. Check if hill$short_rep_hill has at least one non-NA value for soil
-        if (any(!is.na(hill$short_rep_hill$soil))) {
+# --- Inputs assumed: out.geom$xsi in [0,1], hill$short_rep_hill with short_dist and soil ---
 
-            # Extract the unique soil types from hill$short_rep_hill
-            unique_soil_types <- unique(hill$short_rep_hill$soil)
+        # 0) Quick checks
+        stopifnot(is.numeric(out.geom$xsi), length(out.geom$xsi) > 0)
+        hrh <- hill$short_rep_hill
+        if (!("short_dist" %in% names(hrh)) || !("soil" %in% names(hrh))) {
+        stop("hill$short_rep_hill must contain 'short_dist' and 'soil' columns.")
+        }
+        if (!any(!is.na(hrh$soil))) {
+        stop("No non-NA soils found in hill$short_rep_hill$soil.")
+        }
 
-            # Initialize the file content with the first line
-            file_content <- paste(length(unique_soil_types), "0", sep = " ")
+        # 1) Relative position of segments (0..1)
+        x_rel_seg <- hrh$short_dist / max(hrh$short_dist, na.rm = TRUE)
 
-            # Initialize a variable to track the starting xsi for the next soil type
-            current_xsi_start <- 0.0
+        # 2) Ensure surface nodes (xsi) are sorted and remember original order (not strictly needed for files)
+        ord <- order(out.geom$xsi)
+        xsi_sorted <- out.geom$xsi[ord]
 
-            # Loop through each unique soil type
-            for (soil_type in unique_soil_types) {
-                # Find the minimum and maximum 'short_dist' values for the current soil type
-                short_dist_values <- hill$short_rep_hill$short_dist[hill$short_rep_hill$soil == soil_type]
-                short_dist_min <- min(short_dist_values)
-                short_dist_max <- max(short_dist_values)
+        # 3) Nearest segment per node (fast, no loops)
+        iL <- pmax(1L, pmin(findInterval(xsi_sorted, x_rel_seg), length(x_rel_seg) - 1L))
+        iR <- iL + 1L
+        choose_right <- abs(xsi_sorted - x_rel_seg[iR]) < abs(xsi_sorted - x_rel_seg[iL])
+        nearest_idx <- ifelse(choose_right, iR, iL)
 
-                # Calculate the overall horizontal extent
-                short_dist_min_overall <- min(hill$short_rep_hill$short_dist)
-                short_dist_max_overall <- max(hill$short_rep_hill$short_dist)
+        soil_vec_sorted <- hrh$soil[nearest_idx]
 
-                # Calculate relative xsi coordinates
-                relative_xsi_min <- current_xsi_start
-                relative_xsi_max <- (short_dist_max - short_dist_min_overall) / (short_dist_max_overall - short_dist_min_overall)
+        # Handle possible NA soils by simple forward/back fill
+        if (anyNA(soil_vec_sorted)) {
+        # forward fill then backward fill
+        for (k in seq_along(soil_vec_sorted)) {
+            if (is.na(soil_vec_sorted[k]) && k > 1) soil_vec_sorted[k] <- soil_vec_sorted[k-1]
+        }
+        for (k in length(soil_vec_sorted):1) {
+            if (is.na(soil_vec_sorted[k]) && k < length(soil_vec_sorted)) soil_vec_sorted[k] <- soil_vec_sorted[k+1]
+        }
+        # if still NA (all were NA), stop
+        if (anyNA(soil_vec_sorted)) stop("Soil mapping produced only NA values after fill.")
+        }
 
-                # Append the line to the file content string
-                file_content <- paste0(
-                    file_content, "\n",
-                    "0.0 1.0 ", sprintf("%.1f", relative_xsi_min), " ", sprintf("%.1f", relative_xsi_max), " ", soil_type
-                )
-
-                # Update the starting xsi for the next soil type
-                current_xsi_start <- relative_xsi_max
-            }
-
-            # Write the content to a file
-            output_dir <- "/out/CATFLOW/in/soil"
-            output_file <- file.path(output_dir, "soil.dat")
-            write(file_content, file = output_file)
-
+        # 4) Build node "cells" (intervals) via midpoints between xsi nodes
+        #    bounds has length N+1: [0, midpoint(1-2), ..., midpoint(N-1 - N), 1]
+        N <- length(xsi_sorted)
+        if (N == 1L) {
+        bounds <- c(0.0, 1.0)
         } else {
-            cat("hill$short_rep_hill$soil contains only NA values. No soil definition file will be created.\n")
+        mids <- head(xsi_sorted, -1) + diff(xsi_sorted) / 2
+        bounds <- c(0.0, mids, 1.0)
         }
-  
-        # Parse file_content and convert it into a matrix
-        if (exists("file_content")) {
-            # Split the file_content into lines
-            lines <- strsplit(file_content, "\n")[[1]]
-            
-            # Skip the first line (header) and process the remaining lines
-            soil_data <- do.call(rbind, lapply(lines[-1], function(line) {
-                values <- strsplit(line, " ")[[1]]
-                as.numeric(values)
-            }))
-            
-            # Align the soil matrix with the dimensions of out.geom$sko
-            sko_dims <- dim(out.geom$sko)  # Get dimensions of sko
-            soil_matrix <- matrix(NA, nrow = sko_dims[1], ncol = sko_dims[2])  # Initialize matrix
-            
-            # Fill the matrix with soil type values
-            for (i in 1:nrow(soil_data)) {
-                # Map vertical and horizontal grid indices
-                row_start <- round(soil_data[i, 1] * (sko_dims[1] - 1)) + 1
-                row_end <- round(soil_data[i, 2] * (sko_dims[1] - 1)) + 1
-                col_start <- round(soil_data[i, 3] * (sko_dims[2] - 1)) + 1
-                col_end <- round(soil_data[i, 4] * (sko_dims[2] - 1)) + 1
 
-                # Ensure indices are within bounds of the domain
-                row_start <- max(1, min(row_start, sko_dims[1]))
-                row_end <- max(1, min(row_end, sko_dims[1]))
-                col_start <- max(1, min(col_start, sko_dims[2]))
-                col_end <- max(1, min(col_end, sko_dims[2]))
+        # 5) Collapse consecutive nodes with the same soil into bands
+        r <- rle(soil_vec_sorted)
+        run_lengths <- r$lengths
+        run_values  <- r$values
 
-                # Assign the soil type to all rows and columns in the range
-                soil_matrix[row_start:row_end, col_start:col_end] <- soil_data[i, 5]
-            }
-            
-            # Fill NA values in the matrix with a default soil type (e.g., 0 for no data)
-            soil_matrix[is.na(soil_matrix)] <- 0
-        }
+        # Start indices of runs in 1..N
+        run_starts <- cumsum(c(1, head(run_lengths, -1)))
+        run_ends   <- cumsum(run_lengths)
+
+        # Each run spans [bounds[start], bounds[end+1]]
+        xsi_min_vec <- bounds[run_starts]
+        xsi_max_vec <- bounds[run_ends + 1]
+        soil_id_vec <- run_values
+
+        # 6) Compose file content
+        #    IMPORTANT: header should list the number of bands (intervals), not unique soils,
+        #    because a soil may appear in multiple disjoint bands.
+        num_bands <- length(soil_id_vec)
+        file_content <- paste(num_bands, "0")  # your existing "N 0" header
+
+        # Append one line per band: "0.0 1.0 <xsi_min> <xsi_max> <soil_id>"
+        # Match your formatting (one decimal); adjust to "%.3f" if you want finer granularity.
+        lines <- sprintf("0.0 1.0 %.1f %.1f %s",
+                        xsi_min_vec, xsi_max_vec, as.character(soil_id_vec))
+
+        file_content <- paste(file_content, paste(lines, collapse = "\n"), sep = "\n")
+
+        # 7) (Optional) write to file
+        writeLines(file_content, "/out/CATFLOW/in/soil/soil.dat")  # or your desired path
 
         # save output of make.geometry() for use in other tools
         saveRDS(out.geom, file = "/out/geom.Rds")
-        
-        pdf("/out/plots/soil_types.pdf")
-        plot.catf.grid(out.geom$sko, out.geom$hko, val=soil_matrix)
-        dev.off()
 
         # write mulipliers file
-        system("mkdir -p /out/CATFLOW/in/")
-        system("mkdir -p  /out/CATFLOW/in/soil")
-        system("chmod 777 /out/CATFLOW")
-        system("chmod 777 /out/CATFLOW/in")
-        system("chmod 777  /out/CATFLOW/in/soil")
-
         #defaults to 1 change manually if detailed soil data is available   
         fact_mult <- 1
         write.facmat(
@@ -279,8 +268,16 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         
         # Find hillslope_new_id from hill_gpkg_df where hillslope_id matches params$hillslope_id
         precid_val <- hill_gpkg_df$hillslope_new_id[hill_gpkg_df$hillslope_id == params$hillslope_id][1]
+        hrh <- hill$short_rep_hill
+        x_rel_seg <- hrh$short_dist / max(hrh$short_dist)
+        # 2) For every surface node, find nearest segment index
+        nearest_seg_idx <- sapply(out.geom$xsi, function(x) which.min(abs(x_rel_seg - x)))
+
+        # 3) Take the landuse ID from the segment table
+        landuse_vec <- hrh$landuse[nearest_seg_idx]
+
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
-                  xs = out.geom$xsi, lu = 1, precid = precid_val, climid = 1, 
+                  xs = out.geom$xsi, lu = landuse_vec, precid = precid_val, climid = 1, 
                   windid = rep(1, 4))
 
         # return to use in workflows

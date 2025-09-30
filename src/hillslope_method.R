@@ -31,6 +31,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   accum <- li_spatial$accum
   stream_id <- li_spatial$stream_id
   hillslope_as_pts <- li_spatial$hillslope_table
+  landuse <- li_spatial$landuse
   
   # safty check if hillslope_nr is set to zero
   if(hillslope_nr == 0) stop("---Do not use hillslope_nr = 0---")
@@ -74,7 +75,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   
   
   ###
-  # if geology data is available extract informations
+ # if geology data is available extract informations - Placeholder for future use
   geo <- li_spatial$geology
   if(exists('geo') & !is.null(geo))
   {
@@ -86,7 +87,6 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
     ))
     
   }else{rep_hill$geo<-rep(NA, length(rep_hill$mean_elev))}
-  
 
 # if soil data is available extract informations
 soil <- li_spatial$soil
@@ -127,19 +127,49 @@ if(exists('soil') & !is.null(soil))
   ))
 
 }else{rep_hill$soil <-rep(NA, length(rep_hill$mean_elev))}
+
+# if landuse data is available extract informations
+landuse <- li_spatial$landuse
+if(exists('landuse') & !is.null(landuse))
+{
+  landuse_hill <- data.frame(landuse=extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
+                                      function(i){
+                                        landuse_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i))
+
+                                        if(length(landuse_at_dist_indices) > 0) {
+                                          landuse_values <- landuse_hill$landuse[landuse_at_dist_indices]
+                                          accum_values <- flow_hill$accum[landuse_at_dist_indices]
+
+                                          valid_indices <- which(!is.na(landuse_values) & !is.na(accum_values) & is.numeric(accum_values) & accum_values >= 0)
+
+                                          if(length(valid_indices) > 0) {
+                                            weighted_flow_accum_sum <- sum(accum_values[valid_indices], na.rm = TRUE)
+                                            if(weighted_flow_accum_sum > 0) {
+                                              weighted_flow_accum <- as.integer((accum_values[valid_indices] / weighted_flow_accum_sum) * weighted_flow_accum_sum)
+                                              dom_landuse_table <- table(rep(landuse_values[valid_indices], weighted_flow_accum))
+                                              if(length(dom_landuse_table) > 0) {
+                                                dominant_landuse <- as.numeric(names(which.max(dom_landuse_table)))
+                                                return(dominant_landuse)
+                                              } else {
+                                                return(NA) # No valid landuse after weighting
+                                              }
+                                            } else {
+                                              return(NA) # Sum of weighted accum is zero
+                                            }
+                                          } else {
+                                            return(NA) # No valid landuse or accumulation at this distance
+                                          }
+                                        } else {
+                                          return(NA) # No cells at this distance
+                                        }
+                                      }
+  ))
+
+}else{rep_hill$landuse <-rep(NA, length(rep_hill$mean_elev))}
   ###
   # if landuse is available extract informations
-  landuse <- li_spatial$landuse
-  if(exists('landuse') & !is.null(landuse))
-  {
-    landuse_hill <- data.frame(landuse=extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-    rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
-                                      function(i){weighted_flow_accum <- as.integer((flow_hill$accum[dist_hill$dist2river == i] / sum(flow_hill$accum[dist_hill$dist2river == i]))* sum(flow_hill$accum[dist_hill$dist2river == i]))
-                                                  names(which.max(table(rep(landuse_hill$landuse[dist_hill$dist2river == i], weighted_flow_accum))))
-                                      }
-    ))
-    
-  }else{rep_hill$landuse<-rep(NA, length(rep_hill$mean_elev))}
+
   
   # possible to add more information
   
@@ -192,7 +222,7 @@ if(exists('soil') & !is.null(soil))
     rep_area <- sum(c(diff(short_dist, lag=1), 0)* short_width)
     
     # area correction by multi. factor area/extent_trapeze
-      short_width_area_corr <- short_width * area/rep_area
+    short_width_area_corr <- short_width * area/rep_area
         
     short_rep_hill <- data.frame('short_dist' = short_dist,
                                  'short_elev' = short_elev,
