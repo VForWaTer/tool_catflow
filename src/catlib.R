@@ -323,8 +323,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
                   xs = out.geom$xsi, lu = 1, precid = precid_val, climid = 1, 
                   windid = rep(1, 4))
 
-        # return to use in workflows
-        return(out.geom)
+        # return to use in workflows - commented to avoid issues with large objects in logs (Quick and dirty solution)
+        #return(out.geom)
 
     } else {
         stop("Hillslope tool did not return a valid hill object.")
