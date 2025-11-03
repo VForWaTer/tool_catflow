@@ -120,7 +120,9 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         # turn around hillslope catena left to right
         hill$short_rep_hill$east <- rev(hill$short_rep_hill$east)                            # East
         hill$short_rep_hill$north <- rev(hill$short_rep_hill$north)                          # North
-        hill$short_rep_hill$short_elev <- rev(hill$short_rep_hill$short_elev + 6)            # Elev + 4 or 6?
+        hill$short_rep_hill$short_elev <- rev(hill$short_rep_hill$short_elev)            #Elev
+        hill$short_rep_hill$short_width <- rev(hill$short_rep_hill$short_width)            #Width
+        hill$short_rep_hill$short_width_corr <- rev(hill$short_rep_hill$short_width_corr)            #Width
 
         # rectangle, get hillslope width w : A/length = w
         w <- hill$area / hill$short_rep_hill$short_dist[length(hill$short_rep_hill$short_dist)]
@@ -275,6 +277,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
         # 3) Take the landuse ID from the segment table
         landuse_vec <- hrh$landuse[nearest_seg_idx]
+
+        landuse_vec = rev(landuse_vec)  # Reverse to match CATFLOW orientation
 
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
                   xs = out.geom$xsi, lu = landuse_vec, precid = precid_val, climid = 1, 
