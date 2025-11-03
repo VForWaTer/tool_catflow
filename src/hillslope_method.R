@@ -13,7 +13,9 @@
 #Load additional packages (used package version 2.2-31)
 library('raster')
 library('rgdal') # this could be changed to sf in case of dependency clashes with rgdal
-
+library('dplyr')
+library('tidyr')
+library('ggplot2')
 #--------------------------------------------------------------------------------------
 # Own packages
 source("plot.R")
@@ -49,10 +51,10 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   #--------------------------------------------------------------------------------------
   # select hillslope specific elevations, distances, flow accumulations and aspects
   #--------------------------------------------------------------------------------------
-  dist_hill <- data.frame('dist2river'=extract(dist2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  elev_hill <- data.frame('elev2river'=extract(elev2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  flow_hill <- data.frame('accum'=extract(accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
-  asp_hill <- data.frame('aspect'=extract(aspect, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
+  dist_hill <- data.frame('dist2river'=raster::extract(dist2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  elev_hill <- data.frame('elev2river'=raster::extract(elev2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  flow_hill <- data.frame('accum'=raster::extract(accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
+  asp_hill <- data.frame('aspect'=raster::extract(aspect, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
   
   #--------------------------------------------------------------------------------------
   # start calculation
@@ -92,7 +94,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
 soil <- li_spatial$soil
 if(exists('soil') & !is.null(soil))
 {
-  soil_hill <- data.frame(soil=extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  soil_hill <- data.frame(soil=raster::extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
   rep_hill$soil <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){
                                         soil_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i)) # Use the original dist2river here
@@ -132,7 +134,7 @@ if(exists('soil') & !is.null(soil))
 landuse <- li_spatial$landuse
 if(exists('landuse') & !is.null(landuse))
 {
-  landuse_hill <- data.frame(landuse=extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  landuse_hill <- data.frame(landuse=raster::extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
   rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){
                                         landuse_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i))
@@ -170,7 +172,109 @@ if(exists('landuse') & !is.null(landuse))
   ###
   # if landuse is available extract informations
 
-  
+  # Distances you’re evaluating (you already use these names)
+dists <- as.numeric(names(ob_mean_catena))
+
+# Helper to compute weighted class shares for one distance
+dist_list <- lapply(dists, function(d) {
+  idx <- which(dist_hill$dist2river == d)
+  if (length(idx) == 0) return(NULL)
+
+  lu   <- landuse_hill$landuse[idx]
+  acc  <- flow_hill$accum[idx]
+
+  valid <- which(!is.na(lu) & !is.na(acc) & is.finite(acc) & acc >= 0)
+  if (length(valid) == 0) return(NULL)
+
+  wsum <- sum(acc[valid])
+  if (wsum <= 0) return(NULL)
+
+  # weighted sum per land-use class
+  w_per_class <- tapply(acc[valid], lu[valid], sum, default = 0)
+
+  df <- data.frame(
+    distance = d,
+    class    = as.integer(names(w_per_class)),
+    weight   = as.numeric(w_per_class),
+    stringsAsFactors = FALSE
+  )
+
+  # percent share
+  df$pct <- 100 * df$weight / sum(df$weight)
+
+  # dominant class at this distance
+  dom_class <- df$class[which.max(df$weight)]
+  df$dominant <- (df$class == dom_class)
+
+  df
+})
+
+lu_dist <- bind_rows(dist_list)
+if (nrow(lu_dist) == 0) stop("No valid land-use distributions could be computed.")
+
+# Optional: provide readable labels for classes (replace with your LUT if you have it)
+# class_lut <- c(`1`="Arable", `2`="Forest", `3`="Grass", `4`="Urban", `5`="Water")
+# lu_dist$class_label <- recode(as.character(lu_dist$class), !!!class_lut)
+lu_dist$class_label <- factor(lu_dist$class)  # numeric classes as factors by default
+
+# Data for dominant annotations (one row per distance)
+dom_anno <- lu_dist %>%
+  filter(dominant) %>%
+  group_by(distance) %>%
+  # Place the star slightly above 100% so it’s always visible
+  summarise(class_label = first(class_label),
+            y = 103, .groups = "drop")
+
+# ---- Plot: one stacked bar per distance, showing distribution across classes ----
+jpeg("/out/plots/landuse_distribution.jpg")
+gg <- ggplot(lu_dist, aes(x = factor(distance), y = pct, fill = class_label)) +
+  geom_col(width = 0.85, color = "grey25") +
+  # Star + label for dominant class
+  geom_text(data = dom_anno,
+            aes(x = factor(distance), y = y, label = paste0("★ ", class_label)),
+            fontface = "bold", size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.10)), limits = c(0, 106),
+                     breaks = seq(0, 100, 20), labels = function(x) paste0(x, "%")) +
+  labs(
+    x = "Distance to river (units of dist_hill$dist2river)",
+    y = "Land-use share (%)",
+    fill = "Land-use class",
+    title = "Distribution of land-use classes along representative hillslope",
+    subtitle = "Stacked bars are flow-accumulation–weighted; star marks dominant class per distance"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    plot.title   = element_text(face = "bold")
+  )
+print(gg)
+dev.off()
+
+jpeg("/out/plots/landuse_distribution2.jpg")
+lu_dist$dist_bin <- cut(lu_dist$distance, breaks = pretty(lu_dist$distance, 15), include.lowest = TRUE)
+
+gg <- ggplot(lu_dist, aes(x = dist_bin, y = pct, fill = class_label)) +
+  geom_col(width = 0.9, color = "grey25") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  labs(x = "Distance to river (binned)", y = "Land-use share (%)", fill = "Class") +
+  theme_minimal(base_size = 13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(gg)
+dev.off()
+
+jpeg("/out/plots/landuse_distribution3.jpg")
+ggplot(lu_dist, aes(x = distance, y = pct, fill = class_label)) +
+  geom_area(position = "fill", color = NA, alpha = 0.9) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  labs(x = "Distance to river", y = "Relative land-use share",
+       fill = "Land-use class",
+       title = "Land-use composition along hillslope") +
+  theme_minimal(base_size = 13)
+
+dev.off()
   # possible to add more information
   
   ###
@@ -194,7 +298,7 @@ if(exists('landuse') & !is.null(landuse))
   ###
   # find connected river segment
   xy <- matrix(c(min_east, min_north),1,2)
-  river_cell <- extract(stream_id, xy, buffer=100)
+  river_cell <- raster::extract(stream_id, xy, buffer=100)
   stream_hill_nr <- as.numeric(names(which.max(table(river_cell))))
   
   if(length(rep_hill$mean_dist) > min_dist | area > min_area)

@@ -18,7 +18,7 @@ RUN mkdir /out
 RUN mkdir /src
 COPY ./src /src
 
-RUN R -e "install.packages(c('raster', 'WVPlots', 'sigr', 'gridExtra', 'mgcv', 'ggplot2', 'wrapr', 'dplyr', 'ggbeeswarm', 'ggstatsplot'))"
+RUN R -e "install.packages(c('raster', 'WVPlots', 'sigr', 'gridExtra', 'mgcv', 'ggplot2', 'wrapr', 'dplyr', 'ggbeeswarm', 'ggstatsplot','tidyr'))"
 
 # install Catflow-R-Package from source
 RUN R -e "install.packages('/src/Catflow_0.998_v2.tar.gz', repos = NULL, type = 'source')"
