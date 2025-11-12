@@ -72,7 +72,7 @@ tools:
         hillslopes_vect:
           example: /in/hillslopes.gpkg
           extension: .gpkg
-          description: Vector file (GeoPackage) for hillslopes.
+          description: Optional vector file (GeoPackage) for hillslopes.
         elev2river:
           example: /in/elevation.tif
           extension: .tif
@@ -96,7 +96,11 @@ tools:
         soil:
           example: /in/soils.tif
           extension: .tif
-          description: .tif file for soil properties.
+          description: Optional .tif file with soil properties used to derive soil.dat.
+        landuse:
+          example: /in/reproject_lulc_2016.tif
+          extension: .tif
+          description: Optional land-use raster (.tif) used to derive land-use distributions along the hillslope.
     define_run_printouts:
       title: Creates the printout times for the Model run 
       description: |

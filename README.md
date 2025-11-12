@@ -1,63 +1,119 @@
 # CATFLOW preprocessing tool
-This is an internal branch only for development purposes for Manoj J et al (2026)
 
-Pre- and postprocessing workflows for CATFLOW using functions from the [Catflow-R-Package](https://github.com/CATFLOW/Catflow-R-Package).
+This is an internal development branch for Manoj J et al (2026).
 
-The implementation follows the [Tool Specification](https://vforwater.github.io/tool-specs/) for reusable research software using Docker.
+CATFLOW is a physically-based hydrological model for 2‑D hillslopes. The basic modeling unit is a 2‑D hillslope discretized by curvilinear orthogonal coordinates (vertical and downslope); the third dimension is represented via a variable width perpendicular to the slope line. Soil water dynamics are simulated using the Richards equation solved with an implicit mass-conservative Picard iteration (Celia et al., 1990). The model can simulate unsaturated and saturated subsurface flow (no separate groundwater routine), various soil hydraulic parametrizations (e.g., van Genuchten–Mualem), diffusion-wave overland flow (Saint‑Venant), infiltration and saturation excess runoff, re‑infiltration, lateral subsurface flow and return flow. Multiple hillslopes can be connected by a river network for catchment modeling. CATFLOW does not simulate snow or frozen soil. The model has been used in many studies (e.g., Zehe et al., 2005, 2010, 2014; Wienhöfer & Zehe, 2014).
+
+This repository provides containerised preprocessing workflows to create CATFLOW input (representative hillslope geometry and auxiliary files) from raster and optional vector data. It follows the VForWaTer tool-specs for reusable tools.
 
 ## Tools
 
 ### make_representative_hillslope
+Create a CATFLOW geometry file from raster inputs using the representative‑hillslope method (Loritz et al., 2017).
 
-**Title:** Create a CATFLOW geometry file from .tif files using the method of representative hillslopes (Loritz et al 2017).
+Parameters
+- hillslope_id (integer): ID in hillslopes.tif to process; use -1 to process the whole basin. (default: -1)
+- no_flow_area (float): Fraction of upper hillslope considered “no flow” when truncating profile. (default: 0.30)
+- min_cells (integer): Minimum number of unique distance values required to build a representative profile. (default: 10)
+- hill_type (enum): 'constant' | 'cake' | 'variable' (default: constant)
+- depth (float): Profile thickness (m). (default: 2.1)
+- constant_width (boolean): Force a constant width for the generated geometry. (default: true)
+- min_area (integer): Minimum area (m^2) for a hillslope to be processed. (default: 10000)
+- freedom (integer): Spline freedom parameter used for smoothing. (default: 10)
 
-**Description:**
-Hillslope wizard developed by Ralf Loritz (2015)
-Delination of 2D catenas from hillslopes. The idea behind this code is based on a approach from Francke et al. 2006 (Automated 
-catena-based discretization of landscapes for the derivation of hydrological modelling 
-units) and Cochrane and Flanagan (2003). The idea behind this approach is to select every unique distance and their corrosponding 
-elevation from a river inside a hillslope. If more than one raster cell have the same 
-distance the elevation is calculated by a weighted mean using the flow accumulation. The 
-hillslope width can be estimated by the frequency of the appearance of a single distance. 
-In this present version, we assume a fixed horizontal and varying vertical grid spacing for the hillslope element as in Manoj J et al (2024). This would be revised in the
-upcoming versions.
+Data (inputs)
+- flow_accumulation (file, required): Flow accumulation raster (.tif)
+- hillslopes (file, required): Hillslope raster (.tif)
+- elev2river (file, required): Elevation‑to‑river raster (.tif)
+- dist2river (file, required): Distance‑to‑river raster (.tif)
+- filled_dem (file, required): Filled DEM (.tif)
+- aspect (file, required): Aspect raster (.tif)
+- river_id (file, required): River/stream id raster (.tif)
+- soil (file, optional): Soil categorical raster (.tif) — used to generate soil.dat
+- landuse (file, optional): Land‑use categorical raster (.tif) — used to compute land‑use distributions
+- hillslopes_vect (file, optional): Vector GeoPackage (.gpkg) with hillslope attributes (e.g., new precipitation IDs)
 
-**Parameters:**
-- `hillslope_id`: Integer ID of the hillsope from hillslope.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1. (default: -1)
-- `no_flow_area`: Percentage of no flow area with almost no slope within the area of interest. (default: 0.30)
-- `min_cells`: Minimum number of unique rounded distance values to be considered for the hillslope geometry. (default: 10)
-- `hill_type`: Hillslope type. (1) constant thickness (default), (2) cake-shape, (3) variable thickness with spline approximation of lower boundary. Refer CATFLOW manual for more details. (default: constant)
-- `depth`: Thickness of soil profile. (default: 2.1)
-- `constant_width`: If true, use a constant width for the hillslope geometry. If false, use varying width for the hillslope geometry. (default: true)
-- `min_area`: Minimum area (in square meters) required for a hillslope to be considered valid. (default: 10000)
-- `freedom`: Degree of freedom for the spline function used in hillslope geometry calculations. (default: 10)
-
-**Data:**
-- `flow_accumulation`: Flow accumulation .tif file.
-- `hillslopes`: .tif file for hillslopes.
-- `hillslopes_vect`: Vector file (GeoPackage) for hillslopes (`.gpkg`).
-- `elev2river`: .tif file for elevation to river.
-- `dist2river`: .tif file for the distance to river.
-- `filled_dem`: Filled Digital elevation model (DEM).
-- `aspect`: .tif file for aspect.
-- `river_id`: .tif file for river network.
+Outputs (examples)
+- /out/rep_hill.geo — CATFLOW geometry file
+- /out/geom.Rds — geometry object for downstream tools
+- /out/CATFLOW/in/soil/soil.dat — soil bands (if soil provided)
+- /out/CATFLOW/in/landuse/surface.pob — surface nodes / landuse mapping
+- plots in /out/plots/ (energy distribution, geometry, landuse distributions, etc.)
 
 ### define_run_printouts
+Create CATFLOW printout times.
 
-**Title:** Creates the printout times for the Model run
+Parameters
+- start.time (string): "%d.%m.%Y %H:%M:%S"
+- end.time (string): "%d.%m.%Y %H:%M:%S"
+- interval (integer): print interval
+- time.unit (enum): 'hourly' | 'seconds'
+- flag (integer): output flag (1: full, 0: surface nodes, ...)
 
-**Description:**
-Writes a file with printout times for a CATFLOW simulation.
-This file defines how frequently outputs are saved and dispalyed during the run.
+## Usage
 
-**Parameters:**
-- `start.time`: Start date for the simulation ("%d.%m.%Y %H:%M:%S")
-- `end.time`: End date for the simulation ("%d.%m.%Y %H:%M:%S")
-- `interval`: Time interval between printout times
-- `time.unit`: Time units of printout times (Currently only tested for hours and seonds)
-  - `hourly`
-  - `seconds`
-- `flag`: Flag controlling the amount of output at printout times, eventually a vector (1: dump all; 0: dump for surface nodes) (default: 1)
+1. Place input files in `/in`.
+2. Edit `in/input.json` to specify parameters and data.
+3. Build and run the Docker image (or run the script in an R environment with required packages).
+
+Example input.json (make_representative_hillslope)
+```json
+{
+  "make_representative_hillslope": {
+    "parameters": {
+      "hillslope_id": 137,
+      "no_flow_area": 0.30,
+      "min_cells": 10,
+      "hill_type": "constant",
+      "depth": 2.1,
+      "min_area": 10000,
+      "freedom": 10,
+      "constant_width": false
+    },
+    "data": {
+      "flow_accumulation": "/in/flow_accumulation.tif",
+      "hillslopes": "/in/hillslopes.tif",
+      "hillslopes_vect": "/in/hillslopes.gpkg",
+      "elev2river": "/in/elevation.tif",
+      "dist2river": "/in/distance.tif",
+      "filled_dem": "/in/fill_DEM.tif",
+      "aspect": "/in/aspect.tif",
+      "river_id": "/in/streams.tif",
+      "soil": "/in/soils.tif",
+      "landuse": "/in/reproject_lulc_2016.tif"
+    }
+  }
+}
+```
+
+## Running with Docker
+
+Build:
+```sh
+docker build -t catflow .
+```
+
+Run (example):
+```sh
+docker run --rm -v "${PWD}/local/in:/in" -v "${PWD}/local/out:/out" -e TOOL_RUN=make_representative_hillslope catflow
+```
+
+## Development
+- Code in `/src`.
+- Update `tool.yml` and `in/input.json` when changing tool inputs.
+- Tests and CI configured in the repository.
+
+## License
+MIT — see LICENSE.
+
+## References
+- Zehe et al., 2005, 2010, 2014
+- Wienhöfer & Zehe, 2014
+- Celia et al., 1990
+- Loritz et al., 2017
+- Francke et al., 2006
+- Cochrane & Flanagan, 2003
+- CATFLOW R Package: https://github.com/CATFLOW/Catflow-R-Package
 
 
 

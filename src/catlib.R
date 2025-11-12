@@ -87,6 +87,10 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
     dev.off()
 
+    short_rep_hill <- hill$short_rep_hill
+    # save as RDS (and optionally as RData)
+    save(short_rep_hill, file = file.path("/out/CATFLOW/in/hillgeo", "hill.RData"))
+
     if (!is.null(hill)) {
         pdf("/out/plots/energy_distribution.pdf")
         Data <- data.frame(Distance = hill$all_dist$dist2river, Elevation = hill$all_elev$elev2river)
