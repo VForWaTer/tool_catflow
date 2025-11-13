@@ -1,7 +1,7 @@
 # CATFLOW Preprocessing Tool
 
 [![Docker Image CI](https://github.com/VForWaTer/tool_catflow/actions/workflows/docker-image.yml/badge.svg)](https://github.com/VForWaTer/tool_catflow/actions/workflows/docker-image.yml)
-[![DOI](https://zenodo.org/badge/610682357.svg)](https://zenodo.org/badge/latestdoi/610682357)
+[![DOI](https://zenodo.org/badge/566760007.svg)](https://doi.org/10.5281/zenodo.7861332)
 
 **About CATFLOW:**  
 CATFLOW is a physically-based hydrological model for simulating water flow and transport in hillslopes and catchments. The basic modeling unit is a 2-D hillslope, discretized by curvilinear orthogonal coordinates in the vertical and downslope directions; the third dimension is represented via a variable width of the slope perpendicular to the slope line at each node. Soil water dynamics are simulated based on the Richards equation in the pressure-based form and numerically solved using an implicit mass conservative Picard iteration (Celia et al., 1990). The model can simulate unsaturated and saturated subsurface flow and hence has no separate groundwater routine. Soil hydraulic functions following van Genuchten–Mualem are commonly used, though several other parametrizations are possible. Overland flow is simulated using the diffusion wave approximation of the Saint-Venant equation and explicit upstreaming. The hillslope module can simulate infiltration excess runoff, saturation excess runoff, re-infiltration of surface runoff, lateral water flow in the subsurface as well as return flow. For catchment modeling several hillslopes can be interconnected by a river network for collecting and routing their runoff contributions, i.e., surface runoff or subsurface flow leaving the hillslope, to the catchment outlet.
