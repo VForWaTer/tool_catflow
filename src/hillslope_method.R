@@ -13,6 +13,9 @@
 #Load additional packages (used package version 2.2-31)
 library('raster')
 library('rgdal') # this could be changed to sf in case of dependency clashes with rgdal
+library('dplyr')
+library('tidyr')
+library('ggplot2')
 
 #--------------------------------------------------------------------------------------
 # Own packages
@@ -48,10 +51,10 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   #--------------------------------------------------------------------------------------
   # select hillslope specific elevations, distances, flow accumulations and aspects
   #--------------------------------------------------------------------------------------
-  dist_hill <- data.frame('dist2river'=extract(dist2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  elev_hill <- data.frame('elev2river'=extract(elev2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
-  flow_hill <- data.frame('accum'=extract(accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
-  asp_hill <- data.frame('aspect'=extract(aspect, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
+  dist_hill <- data.frame('dist2river'=raster::extract(dist2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  elev_hill <- data.frame('elev2river'=raster::extract(elev2river, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  flow_hill <- data.frame('accum'=raster::extract(accum, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
+  asp_hill <- data.frame('aspect'=raster::extract(aspect, hill[, c(1,2)]), 'x'=hill[1], 'y'=hill[2])
   
   #--------------------------------------------------------------------------------------
   # start calculation
@@ -78,7 +81,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
   geo <- li_spatial$geology
   if(exists('geo') & !is.null(geo))
   {
-    geo_hill <- data.frame(geo=extract(geo, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+    geo_hill <- data.frame(geo=raster::extract(geo, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
     rep_hill$geo <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){weighted_flow_accum <- as.integer((flow_hill$accum[dist_hill$dist2river == i] / sum(flow_hill$accum[dist_hill$dist2river == i]))* sum(flow_hill$accum[dist_hill$dist2river == i]))
                                                   names(which.max(table(rep(geo_hill$geo[dist_hill$dist2river == i], weighted_flow_accum))))
@@ -92,7 +95,7 @@ hillslope_tool <- function(hillslope_nr, li_spatial, plot_2d_catena=FALSE, plot_
 soil <- li_spatial$soil
 if(exists('soil') & !is.null(soil))
 {
-  soil_hill <- data.frame(soil=extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  soil_hill <- data.frame(soil=raster::extract(soil, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
   rep_hill$soil <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){
                                         soil_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i)) # Use the original dist2river here
@@ -132,7 +135,7 @@ if(exists('soil') & !is.null(soil))
   landuse <- li_spatial$landuse
   if(exists('landuse') & !is.null(landuse))
   {
-    landuse_hill <- data.frame(landuse=extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+    landuse_hill <- data.frame(landuse=raster::extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
     rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){weighted_flow_accum <- as.integer((flow_hill$accum[dist_hill$dist2river == i] / sum(flow_hill$accum[dist_hill$dist2river == i]))* sum(flow_hill$accum[dist_hill$dist2river == i]))
                                                   names(which.max(table(rep(landuse_hill$landuse[dist_hill$dist2river == i], weighted_flow_accum))))
@@ -164,7 +167,7 @@ if(exists('soil') & !is.null(soil))
   ###
   # find connected river segment
   xy <- matrix(c(min_east, min_north),1,2)
-  river_cell <- extract(stream_id, xy, buffer=100)
+  river_cell <- raster::extract(stream_id, xy, buffer=100)
   stream_hill_nr <- as.numeric(names(which.max(table(river_cell))))
   
   if(length(rep_hill$mean_dist) > min_dist | area > min_area)
