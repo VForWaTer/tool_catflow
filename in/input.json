@@ -18,8 +18,7 @@
             "filled_dem" : "/in/fill_DEM.tif",
             "aspect" : "/in/aspect.tif",
             "river_id" : "/in/streams.tif",
-            "soil" : "/in/soils.tif",
-            "landuse" : "/in/reproject_lulc_2016.tif"
+            "soil" : "/in/soils.tif"
         } 
     }
 }
