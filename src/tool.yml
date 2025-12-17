@@ -92,4 +92,8 @@ tools:
         soil:
           example: /in/soils.tif
           extension: .tif
-          description: .tif file for soil properties (Optional)
+          description: .tif file for soil properties (Optional - if not needed, omit from input.json).
+        landuse:
+          example: /in/landuse.tif
+          extension: .tif
+          description: .tif file for landuse properties (Optional - if not needed, omit from input.json).
