@@ -136,7 +136,7 @@ if(exists('soil') & !is.null(soil))
 landuse <- li_spatial$landuse
 if(exists('landuse') & !is.null(landuse))
 {
-  landuse_hill <- data.frame(landuse=extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
+  landuse_hill <- data.frame(landuse=raster::extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
   rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){
                                         landuse_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i))
@@ -259,12 +259,24 @@ if(exists('landuse') & !is.null(landuse))
                     'area'=area, 'stream_id' = stream_hill_nr,
                     'mean_aspect'=mean_aspect,
                     'short_rep_hill'=short_rep_hill,
-                    'hillslope_nr'=hillslope_nr
-                    )
-    cat('  ____________ 
-< Hillslope finished successfully!! ')
-    
-    
+                    'hillslope_nr'=hillslope_nr)
+
+cat(
+"==============================
+      /\\_/\\\
+     ( o.o )
+      > ^ <
+     /|   |\\\
+    (_|   |_)
+
+Hillslope finished successfully.
+CATFLOW ready to purr. 😼💧
+==============================\n"
+)
+
+
+
+                      
   } else {li_hill <- list('final_hill' = data.frame('east'=x, 'north'=y,
                                                'dist2river'= rep_hill$mean_dist,
                                                'org_elev' = rep_hill$mean_elev,
@@ -276,7 +288,7 @@ if(exists('landuse') & !is.null(landuse))
                           'hillslope_nr'=hillslope_nr
                          )
   
-         print('Hillslope too small or too short!')
+         print('Hillslope too small or too short! Aborting spline fitting...')
          }
   return(li_hill)
 }

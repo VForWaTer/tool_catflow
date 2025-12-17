@@ -136,8 +136,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
 
     short_rep_hill <- hill$short_rep_hill
     # save as RDS (and optionally as RData)
-    save(hill, file = file.path("/out/CATFLOW/in/hillgeo", "hill.RData"))
-    save(short_rep_hill, file = file.path("/out/CATFLOW/in/hillgeo", "shorthill.RData"))
+    save(hill, file = file.path("/out/CATFLOW/", "hill.RData"))
+    save(short_rep_hill, file = file.path("/out/CATFLOW/", "shorthill.RData"))
 
     if (!is.null(hill)) {
         pdf("/out/plots/energy_distribution.pdf")
