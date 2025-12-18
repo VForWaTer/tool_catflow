@@ -40,11 +40,13 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
 
 **Parameters:**
 - `hillslope_id` (integer): Integer ID of the hillslope from hillslopes.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1.
-- `no_flow_area` (float): Percentage of no flow area with almost no slope within the area of interest. (default: 0.30)
-- `min_cells` (integer): Minimum number of unique rounded distance values to be considered for the hillslope geometry. (default: 10)
+ - `no_flow_area` (float): Percentage of the upper hillslope considered 'no flow' (area with almost no slope). (default: 0.30)
+ - `min_cells` (integer): Minimum number of unique rounded distance values to be considered for the hillslope geometry. (default: 10)
 - `hill_type` (enum): Hillslope type. Options: `constant`, `cake`, `variable`. (default: constant)
-- `depth` (float): Thickness of soil profile. (default: 2.1)
-- `constant_width` (boolean): If true, use a constant width for the hillslope geometry. If false, use varying width. (default: true)
+- `depth` (float): Thickness of soil profile (m). (default: 2.1)
+- `constant_width` (boolean): If true, use a constant width for the hillslope geometry. If false, use a varying width along the hillslope profile. (default: false)
+- `precip_distributed` (boolean): If true, precipitation is distributed across hillslopes (each hillslope receives its own precip_id, typically the hillslope ID).If false, precipitation is applied lumped (single precipitation input for all hillslopes). (default: true)
+- `clim_distributed` (boolean): If true, climatological inputs (e.g., temperature, radiation) are distributed across hillslopes (each hillslope receives its own clim_id). If false, climatological inputs are applied lumped (single input for all hillslopes).(default: true)
 - `min_area` (integer): Minimum area (in square meters) required for a hillslope to be considered valid. (default: 10000)
 - `freedom` (integer): Degree of freedom for the spline function used in hillslope geometry calculations. (default: 10)
 
@@ -57,6 +59,7 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
 - `aspect` (file): .tif file for aspect.
 - `river_id` (file): .tif file for river network.
 - `soil` (file, optional): .tif file for soil properties.
+ - `landuse` (file, optional): .tif file for landuse properties.
 
 ---
 
@@ -74,14 +77,16 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
    {
      "make_representative_hillslope": {
        "parameters": {
-         "hillslope_id": 223,
+         "hillslope_id": -1,
          "no_flow_area": 0.30,
          "min_cells": 10,
          "hill_type": "constant",
          "depth": 2.1,
          "min_area": 10000,
          "freedom": 10,
-         "constant_width": false
+         "constant_width": false,
+         "precip_distributed": true,
+         "clim_distributed": true
        },
        "data": {
          "flow_accumulation": "/in/flow_accumulation.tif",
@@ -91,7 +96,8 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
          "filled_dem": "/in/fill_DEM.tif",
          "aspect": "/in/aspect.tif",
          "river_id": "/in/streams.tif",
-         "soil": "/in/soils.tif"
+         "soil": "/in/soils.tif",
+         "landuse": "/in/landuse.tif"
        }
      }
    }
@@ -152,14 +158,16 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
   {
     "make_representative_hillslope": {
       "parameters": {
-        "hillslope_id": 223,
+        "hillslope_id":-1,
         "no_flow_area": 0.30,
         "min_cells": 10,
         "hill_type": "constant",
         "depth": 2.1,
         "min_area": 10000,
         "freedom": 10,
-        "constant_width": false
+        "constant_width": false,
+        "precip_distributed": true,
+        "clim_distributed": true
       },
       "data": {
         "flow_accumulation": "/in/flow_accumulation.tif",
@@ -169,7 +177,8 @@ Creates a CATFLOW geometry file from .tif files using the method of representati
         "filled_dem": "/in/fill_DEM.tif",
         "aspect": "/in/aspect.tif",
         "river_id": "/in/streams.tif",
-        "soil": "/in/soils.tif"
+        "soil": "/in/soils.tif",
+        "landuse": "/in/landuse.tif"
       }
     }
   }

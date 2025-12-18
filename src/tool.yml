@@ -14,22 +14,21 @@ tools:
       parameters:
         hillslope_id:
           type: integer
-          description: Integer ID of the hillsope from hillslope.tif for calculating the geometry. If entire basin is to be used for the representative hillslope, give -1.
+          description: Integer ID of the hillslope from `hillslopes.tif` used to calculate the geometry. Use -1 to process the entire basin.
           default: -1
         no_flow_area:
           type: float
           description: |
-           Percentage of no flow area  with almost no slope within the area of interest. 
-           The idea is to identify a part of the upper hillslope that has consistently very low estimated width (below the no_rf quantile) 
-           and might be considered a "no flow" or contributing only minimally to runoff. By shortening the profile, the tool might focus on the more 
-           hydrologically active lower part of the hillslope.
-          default: 0.30  
+           Percentage of the upper hillslope to consider 'no flow' (area with almost no slope). This identifies upper areas with consistently
+           very low estimated width (below a chosen width quantile) that contribute minimally to runoff. Shortening the profile focuses on
+           the hydrologically active lower hillslope.
+          default: 0.30
         min_cells:
           type: integer
           description: |
-           Minimum number of unique number of unique rounded distance values to be considered for the hillslope geometry.
-           This parameter helps to filter out very short or simple hillslopes that might not be well-represented by the 2D catena approach,
-            potentially due to insufficient variation in distance and elevation.
+           Minimum number of unique rounded distance values to be considered for the hillslope geometry.
+           This parameter helps to filter out very short or simple hillslopes that may not be well represented by the 2D catena approach,
+           potentially due to insufficient variation in distance and elevation.
           default: 10
         hill_type:
           type: enum
@@ -43,12 +42,24 @@ tools:
           default: constant
         depth:
           type: float
-          description: thickness of soil profile
+          description: Thickness of the soil profile (m).
           default: 2.1
         constant_width:
           type: boolean
           description: |
-            If true, use a constant width for the hillslope geometry. If false, use varying width for the hillslope geometry.
+            If true, use a constant width for the hillslope geometry. If false, use a varying width along the hillslope profile.
+          default: false
+        precip_distributed:
+          type: boolean
+          description: |
+            If true, precipitation is distributed across hillslopes (each hillslope receives its own precip_id, typically the hillslope ID).
+            If false, precipitation is applied lumped (single precipitation input for all hillslopes).
+          default: true
+        clim_distributed:
+          type: boolean
+          description: |
+            If true, climatological inputs (e.g., temperature, radiation) are distributed across hillslopes (each hillslope receives its own clim_id).
+            If false, climatological inputs are applied lumped (single input for all hillslopes).
           default: true
         min_area:
           type: integer
@@ -58,7 +69,7 @@ tools:
         freedom:
           type: integer
           description: |
-            Degree of freedom for the spline function used in hillslope geometry calculations.
+            Degree of freedom for the spline function used in hillslope geometry calculations (positive integer).
           default: 10
       data:
         flow_accumulation:
@@ -98,5 +109,3 @@ tools:
           extension: .tif
           description: .tif file for landuse properties (Optional - if not needed, omit from input.json).
 
-   
-          

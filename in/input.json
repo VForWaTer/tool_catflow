@@ -8,7 +8,9 @@
             "depth" : 2.1,
             "min_area": 10000,
             "freedom": 10,
-            "constant_width": false
+            "constant_width": false,
+            "precip_distributed": true,
+            "clim_distributed": true
         },
         "data":{ 
             "flow_accumulation" : "/in/flow_accumulation.tif",

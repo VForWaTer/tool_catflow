@@ -215,8 +215,8 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
       #      precid_val <- 1
        # }
         # make geometry from hillslope parameters
-        precid_val <- hillslope_nr # use hillslope id inputed as precid and hillslope identifier
-        out.geom <- make.geometry(topo,numh =precid_val, make.output = TRUE, project.path = project.path)
+        hid <- abs(hillslope_nr)
+        out.geom <- make.geometry(topo,numh =hid, make.output = TRUE, project.path = project.path)
 
         pdf("/out/plots/geometry.pdf")
         plot.catf.grid(out.geom$sko, out.geom$hko, val=out.geom$hko,boundcol = 1)
@@ -325,7 +325,19 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         system("mkdir -p  /out/CATFLOW/in/landuse")
         system("chmod 777  /out/CATFLOW/in/landuse")
 
-         if (!is.null(data_paths$landuse) && file.exists(data_paths$landuse)) {
+        if (params$precip_distributed) {
+            precid_val <- abs(hillslope_nr)
+        }else {
+            precid_val <- 1
+        }
+
+        if (params$clim_distributed) {
+            climid_val <- abs(hillslope_nr)
+        }else {
+            climid_val <- 1
+        }
+
+        if (!is.null(data_paths$landuse) && file.exists(data_paths$landuse)) {
         hrh <- hill$short_rep_hill
         x_rel_seg <- hrh$short_dist / max(hrh$short_dist)
         # 2) For every surface node, find nearest segment index
@@ -337,12 +349,13 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
         landuse_vec = rev(landuse_vec)  # Reverse to match CATFLOW orientation
 
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
-                  xs = out.geom$xsi, lu = landuse_vec, precid = precid_val, climid = 1, 
+                  xs = out.geom$xsi, lu = landuse_vec, precid = precid_val, climid = climid_val, 
                   windid = rep(1, 4))
 
          } else {
+        # if no landuse map is provided, assign default landuse id 1      
         write.surface.pob(output.file = "/out/CATFLOW/in/landuse/surface.pob", 
-                  xs = out.geom$xsi, lu = 1, precid = precid_val, climid = 1, 
+                  xs = out.geom$xsi, lu = 1, precid = precid_val, climid = climid_val, 
                   windid = rep(1, 4))
          }
 
