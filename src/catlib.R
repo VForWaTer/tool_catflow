@@ -100,11 +100,6 @@ make_geometry_representative_hillslope <- function(params,data_paths) {
     # transform hillslope to point table
     hillslope_data_frame <- rasterToPoints(hillslopes)
 
-    # Remove decimal places (performance)
-    elev_2_river <- floor(elev_2_river)
-    dist_2_river <- floor(dist_2_river)
-    flow_accum <-  floor(flow_accum)
-
     # create a list of the input maps
     li_spatial <- list(
         "accum" = flow_accum,

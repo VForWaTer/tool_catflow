@@ -139,7 +139,7 @@ if(exists('landuse') & !is.null(landuse))
   landuse_hill <- data.frame(landuse=raster::extract(landuse, hill[, c(1,2)]), 'x'=hill[,1], 'y'=hill[,2])
   rep_hill$landuse <- as.numeric(sapply(names(ob_mean_catena),
                                       function(i){
-                                        landuse_at_dist_indices <- which(dist_hill$dist2river == as.numeric(i))
+                                        landuse_at_dist_indices <- which(dist_hill$dist2river == i)
 
                                         if(length(landuse_at_dist_indices) > 0) {
                                           landuse_values <- landuse_hill$landuse[landuse_at_dist_indices]
@@ -156,16 +156,20 @@ if(exists('landuse') & !is.null(landuse))
                                                 dominant_landuse <- as.numeric(names(which.max(dom_landuse_table)))
                                                 return(dominant_landuse)
                                               } else {
-                                                return(NA) # No valid landuse after weighting
+                                                warning(paste("No valid landuse after weighting at distance:", i))
+                                                return(NA)
                                               }
                                             } else {
-                                              return(NA) # Sum of weighted accum is zero
+                                              warning(paste("Sum of weighted accumulation is zero at distance:", i))
+                                              return(NA)
                                             }
                                           } else {
-                                            return(NA) # No valid landuse or accumulation at this distance
+                                            warning(paste("No valid landuse or accumulation at distance:", i))
+                                            return(NA)
                                           }
                                         } else {
-                                          return(NA) # No cells at this distance
+                                          warning(paste("No cells at distance:", i))
+                                          return(NA)
                                         }
                                       }
   ))
