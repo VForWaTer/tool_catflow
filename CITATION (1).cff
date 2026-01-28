@@ -1,0 +1,32 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: tool_catflow
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ashish
+    family-names: Manoj J
+    email: ashish.jaseetha@kit.edu
+    affiliation: KIT
+  - given-names: Alexander
+    family-names: Dolich
+    email: alexander.dolich@kit.edu
+    affiliation: KIT
+  - given-names: Ralf
+    family-names: Loritz
+    email: ralf.loritz@kit.edu
+    affiliation: KIT
+  - given-names: Jan
+    family-names: Wienhöfer
+    email: jan.wienhoefer@kit.edu
+    affiliation: KIT
+  - given-names: Mirko
+    family-names: Mälicke
+    email: mirko.maelicke@kit.edu
+    affiliation: KIT
+repository-code: 'https://github.com/VForWaTer/tool_catflow'
+license: GPL-3.0
